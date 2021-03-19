@@ -1,5 +1,6 @@
 #include "../include/stdafx.h"
 #include "../Generic/BookChapter.h"
+#include <string_view>
 
 class C1_DeducingTypes
     : public BookChapter
@@ -11,7 +12,7 @@ class C1_DeducingTypes
 
     private:
         template<typename T>
-        void DeduceTypeFromFunction(T&);
+        void DeduceTypeFromFunction(const T&);
 };
 // class C2_Auto : public BookChapter
 // {
