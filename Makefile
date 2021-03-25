@@ -1,13 +1,14 @@
 IDIR=include
 CC=g++
-CFLAGS=-I$(IDIR)
+CFLAGS=-I$(IDIR) -std=c++17
 
 _DEPS= src/Chapters/Chapters.h \
     src/Generic/BookChapter.h \
-    src/Generic/Widget.h
+    src/Generic/Widget.h \
+	src/TourOfCpp/TourOfCpp.h
 
 _OBJ = obj/main.o obj/BookChapter.o obj/Widget.o \
-       obj/C1_DeducingTypes.o
+       obj/C1_DeducingTypes.o obj/TourOfCpp.o
 
 DEPS = $(patsubst %,$(IDIR)%,$(_DEPS))
 OBJ = $(patsubst %,$(ODIR)%,$(_OBJ))
@@ -25,6 +26,9 @@ obj/Widget.o: src/Generic/Widget.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 obj/C1_DeducingTypes.o: src/Chapters/C1_DeducingTypes.cpp
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+obj/TourOfCpp.o: src/TourOfCpp/TourOfCpp.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(ODIR)/%.o: %.cpp $(DEPS)

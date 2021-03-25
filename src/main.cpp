@@ -1,5 +1,6 @@
 #include "../include/stdafx.h"
 #include "Chapters/Chapters.h"
+#include "TourOfCpp/TourOfCpp.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ int main(int argc, char** argv)
 		cout << "6. Lambda" << endl;
 		cout << "7. Concurrency API" << endl;
 		cout << "8. Tweaks" << endl;
+		cout << "12. User Defined Types" << endl;
 		cout << "0. Exit" << endl;
 
 		int selection;
@@ -54,6 +56,9 @@ int main(int argc, char** argv)
 		// case 8:
 		// 	chapter = new Chapter8{};
 		// 	break;
+		case 12:
+			chapter = new A2_UserDefinedTypes{};
+			break;
 
         case 0:
             exit = true;

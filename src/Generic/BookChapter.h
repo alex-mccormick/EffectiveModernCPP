@@ -1,3 +1,4 @@
+#pragma once
 #include "../include/stdafx.h"
 #include <unordered_map>
 #include <string>
