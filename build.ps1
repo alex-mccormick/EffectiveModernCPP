@@ -1,1 +1,2 @@
-gcc -c 
+minGW32-make
+./EffectiveModernCpp.exe
