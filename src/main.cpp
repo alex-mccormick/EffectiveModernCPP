@@ -23,6 +23,8 @@ int main(int argc, char** argv)
 		cout << "7. Concurrency API" << endl;
 		cout << "8. Tweaks" << endl;
 		cout << "12. User Defined Types" << endl;
+		cout << "13. Modules" << endl;
+		cout << "14. Classes" << endl;
 		cout << "0. Exit" << endl;
 
 		int selection;
@@ -58,6 +60,12 @@ int main(int argc, char** argv)
 		// 	break;
 		case 12:
 			chapter = new A2_UserDefinedTypes{};
+			break;
+		case 13:
+			chapter = new A3_Modularity{};
+			break;
+		case 14:
+			chapter = new A4_Classes{};
 			break;
 
         case 0:
