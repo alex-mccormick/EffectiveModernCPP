@@ -1,6 +1,8 @@
 #include "TourOfCpp.h"
 #include <variant>
 #include <sstream>
+#include <memory>
+#include <ctime>
 #include "Matrix.h"
 
 A2_UserDefinedTypes::A2_UserDefinedTypes()
@@ -201,9 +203,61 @@ void A4_Classes::AbstractClassDemo()
     delete f1Car;
 }
 
+double GetDuration(double t1, double t2)
+{
+    return (t2 - t1) / (double)(CLOCKS_PER_SEC);
+}
+
 void A4_Classes::UniquePtrDemo()
 {
-    // TODO: unique ptr demo
+    auto nPlanes = 100000;
+
+    {
+        std::clock_t t1 = std::clock();
+        std::vector<AirVehicle*> planes(nPlanes);
+        for (auto &p:planes)
+        {
+            p = new Boeing747{1e5};
+        }
+        std::clock_t t2 = std::clock();
+        std::cout << "Allocating " << nPlanes << " planes to a vector without using unique_ptr " << GetDuration(t1, t2) << " s" << std::endl;
+        std::cout << "We can prove here that the engines are not cleaned up when the vector goes out of scope" << std::endl;
+    }
+
+    {
+        std::clock_t t1 = std::clock();
+        std::vector<std::unique_ptr<AirVehicle>> planes(nPlanes);
+        for (auto &p:planes)
+        {
+            auto ptr = std::make_unique<Boeing747>(1e5);
+            p = std::move(ptr);
+        }
+        std::clock_t t2 = std::clock();
+        std::cout << "Allocating " << nPlanes << " planes to a vector by move assignment took " << GetDuration(t1, t2) << " s" << std::endl;
+    }
+
+    {
+        std::clock_t t1 = std::clock();
+        std::vector<std::unique_ptr<AirVehicle>> planes(nPlanes);
+        for (auto i = 0; i != nPlanes; ++i)
+        {
+            planes.push_back(std::make_unique<Boeing747>(1e5));
+        }
+        std::clock_t t2 = std::clock();
+        std::cout << "Allocating " << nPlanes << " planes to a vector by pushing pointers to the back without reserve " << GetDuration(t1, t2)  << " s" << std::endl;
+    }
+
+    {        
+        std::clock_t t1 = std::clock();
+        std::vector<std::unique_ptr<AirVehicle>> planes(nPlanes);
+        planes.reserve(nPlanes);
+        for (auto i = 0; i != nPlanes; ++i)
+        {
+            planes.push_back(std::make_unique<Boeing747>(1e5));
+        }
+        std::clock_t t2 = std::clock();
+        std::cout << "Allocating " << nPlanes << " planes to a vector by pushing pointers to the back with reserve " << GetDuration(t1, t2)  << " s" << std::endl;
+    }
 }
 
 Engine::Engine(double _torque, double _speed = 100)
@@ -274,10 +328,13 @@ AirVehicle::AirVehicle(double dragForce, std::initializer_list<Engine*> _engines
 }
 AirVehicle::~AirVehicle()
 {
+    auto i{0};
     for (auto e:engines)
     {
+        ++i;
         delete e;
     }
+    // std::cout << "You just deleted an air vehicle with " << i << " engines" << std::endl;
 }
 
 double AirVehicle::Speed() const
