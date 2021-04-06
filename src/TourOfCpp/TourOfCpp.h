@@ -58,10 +58,10 @@ class A2_UserDefinedTypes
         ~A2_UserDefinedTypes();
 
     private:
-        void StructureDemo(void);
-        void ClassDemo(void);
-        void UnionDemo(void);
-        void VariantDemo(void);
+        static void StructureDemo(void);
+        static void ClassDemo(void);
+        static void UnionDemo(void);
+        static void VariantDemo(void);
 
 };
 class A3_Modularity
@@ -72,7 +72,7 @@ class A3_Modularity
         ~A3_Modularity();
 
     private:
-        void MatrixDemo(void);
+        static void MatrixDemo(void);
 };
 
 class A4_Classes
@@ -83,8 +83,8 @@ class A4_Classes
         ~A4_Classes();
 
     private:
-        void AbstractClassDemo(void);
-        void UniquePtrDemo(void);
+        static void AbstractClassDemo(void);
+        static void UniquePtrDemo(void);
 };
 
 

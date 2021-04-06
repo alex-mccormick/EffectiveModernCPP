@@ -8,11 +8,11 @@ class C1_DeducingTypes
     public:
         C1_DeducingTypes();
         ~C1_DeducingTypes();
-        void TypeDeduction(void);
+        static void TypeDeduction(void);
 
     private:
         template<typename T>
-        void DeduceTypeFromFunction(const T&);
+        static void DeduceTypeFromFunction(const T&);
 };
 // class C2_Auto : public BookChapter
 // {
