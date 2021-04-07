@@ -260,6 +260,58 @@ void A4_Classes::UniquePtrDemo()
     }
 }
 
+A5_MoveAndCopy::A5_MoveAndCopy()
+    :BookChapter("Classes")
+{
+    this->menuMap["SumMatrixDemo"] = (BookChapter::MenuFunction) &(A5_MoveAndCopy::SumMatrixDemo);
+}
+
+A5_MoveAndCopy::~A5_MoveAndCopy()
+{
+
+}
+
+void A5_MoveAndCopy::SumMatrixDemo()
+{
+    // This should be a 2x2 matrix full of zeros
+    Matrix m1{2};
+    std::cout << "This should be a 2x2 matrix full of zeros" << std::endl;
+    std::cout << m1 << std::endl;
+
+    // This should be a 1x1 matrix with the value 2.0
+    Matrix m2{2.0};
+    std::cout << "This should be a 1x1 matrix with the value 2.0" << std::endl;
+    std::cout << m2 << std::endl;
+
+    // Let's make some bigger matrices
+    Matrix bigM1(1000, 1.2);
+    Matrix bigM2(2000, 1.5);
+    Matrix bigM3 = Matrix(3000, 1.8); // The copy should be elided here
+
+    std::cout << "The sizes should be 1000, 2000, 3000" << std::endl;
+    std::cout << "Size of bigM1: " << bigM1.size() << std::endl;
+    std::cout << "Size of bigM2: " << bigM2.size() << std::endl;
+    std::cout << "Size of bigM3: " << bigM3.size() << std::endl;
+
+    // This should use the copy; so now M3 should be the same size as M1 and M1 should still be useable
+    bigM3 = bigM1;
+    std::cout << "M3 should be the same size as M1" << std::endl;
+    std::cout << "Size of bigM1: " << bigM1.size() << std::endl;
+    std::cout << "Size of bigM3: " << bigM3.size() << std::endl;
+
+    auto bigMSum = bigM1 + bigM3;
+    // Check that an element in the middle of this array is used properly
+    std::cout << "We should be able to reference a value in the middle of the matrix, and see that its value is 2.4" << std::endl;
+    std::cout << "Element 50 is " << bigMSum[50] << std::endl;
+
+    // Now we want to exercise the move constructor
+    bigM2 = std::move(bigM1);
+    // Now we have removed any values from m1
+    // Check:
+    std::cout << "bigM1 is " << (bigM1.isEmpty() ? "empty" : "not empty") << std::endl;
+    
+}
+
 Engine::Engine(double _torque, double _speed = 100)
 {
     torque = _torque;

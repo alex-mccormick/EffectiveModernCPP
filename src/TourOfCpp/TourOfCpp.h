@@ -87,6 +87,17 @@ class A4_Classes
         static void UniquePtrDemo(void);
 };
 
+class A5_MoveAndCopy
+    : public BookChapter
+{
+    public:
+        A5_MoveAndCopy();
+        ~A5_MoveAndCopy();
+
+    private:
+        static void SumMatrixDemo(void);
+};
+
 
 class Engine
 {
