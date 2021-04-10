@@ -3,6 +3,7 @@
 #include <sstream>
 #include <memory>
 #include <ctime>
+#include <chrono>
 #include "Matrix.h"
 
 A2_UserDefinedTypes::A2_UserDefinedTypes()
@@ -208,6 +209,24 @@ double GetDuration(double t1, double t2)
     return (t2 - t1) / (double)(CLOCKS_PER_SEC);
 }
 
+struct TimerStruct
+{
+    std::chrono::high_resolution_clock::time_point start;
+
+    TimerStruct()
+    {
+        start = std::chrono::high_resolution_clock::now();
+    }
+
+    ~TimerStruct()
+    {
+        auto end = std::chrono::high_resolution_clock::now();
+        auto totalTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+
+        std::cout << "Timer says " << totalTime.count() * 1000 << " ms" << std::endl;
+    } 
+};
+
 void A4_Classes::UniquePtrDemo()
 {
     auto nPlanes = 100000;
@@ -225,6 +244,7 @@ void A4_Classes::UniquePtrDemo()
     }
 
     {
+        auto t = TimerStruct();
         std::clock_t t1 = std::clock();
         std::vector<std::unique_ptr<AirVehicle>> planes(nPlanes);
         for (auto &p:planes)
@@ -237,6 +257,7 @@ void A4_Classes::UniquePtrDemo()
     }
 
     {
+        auto t = TimerStruct();
         std::clock_t t1 = std::clock();
         std::vector<std::unique_ptr<AirVehicle>> planes(nPlanes);
         for (auto i = 0; i != nPlanes; ++i)
@@ -248,6 +269,7 @@ void A4_Classes::UniquePtrDemo()
     }
 
     {        
+        auto t = TimerStruct();
         std::clock_t t1 = std::clock();
         std::vector<std::unique_ptr<AirVehicle>> planes(nPlanes);
         planes.reserve(nPlanes);
