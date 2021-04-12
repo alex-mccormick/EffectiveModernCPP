@@ -19,6 +19,10 @@ class Vector {
         explicit Vector(T);
         Vector(int, T);
         Vector(std::initializer_list<T>);
+
+        template<typename Iterator>
+        Vector(Iterator, Iterator) -> Vector<typename Iterator::value_type>;
+
         T sum();
         T& operator[](int);
         friend T* begin(Vector& v);

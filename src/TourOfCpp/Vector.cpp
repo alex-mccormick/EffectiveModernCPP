@@ -9,7 +9,7 @@ Vector<T>::Vector()
 
 template<typename T>
 Vector<T>::Vector(const Vector<T>& v)
-    : Vector<T>(v.size())
+    : Vector(v.size())
 {
     // Copy constructor, so we need to copy the data
     for (auto i = 0; i != sz; ++i)
@@ -66,12 +66,12 @@ template<typename T>
 // If the matrix is initialised with a double, the explicit constructor forces this
 // to be used as the sole value in the matrix with a size of 1.
 Vector<T>::Vector(T d)
-    :Vector<T>(1, d)
+    :Vector(1, d)
 { }
 
 template<typename T>
 Vector<T>::Vector(int s, T value)
-    : Vector<T>{s}
+    : Vector{s}
 {
     for (auto i = 0; i != s; ++i)
     {
@@ -79,8 +79,36 @@ Vector<T>::Vector(int s, T value)
     }
 }
 
-//TODO: Initialiser list constructor
+template<typename T>
+Vector<T>::Vector(std::initializer_list<T> init)
+    : Vector(static_cast<int>(init.size())) 
+{
+    for (int i = 0; i != sz; ++i)
+    {
+        data[i] = init[i];
+    }
+}
 
+template<typename Iterator>
+Vector<T>::Vector(Iterator start, Iterator end)
+{
+    int i{0};
+    for (Iterator x = start; x != end; ++x)
+    {
+        ++i;
+    }
+    data = std::make_unique<T[]>(new T[i]);
+    sz = i;
+
+    int i{0};
+    for (Iterator x = start; x != end; ++x)
+    {
+        data[i] = x.get();
+        ++i;
+    }
+    
+
+}
 
 template<typename T>
 int Vector<T>::size() const
@@ -96,7 +124,7 @@ bool Vector<T>::isEmpty() const
 template<typename T>
 T& Vector<T>::operator[](int i)
 {
-    if (i < 0 || i >= this->size())
+    if (i < 0 || i >= sz)
         throw std::out_of_range{"Vector<T>::operator[] out of range"};
     return data.get()+i;
 }
@@ -115,9 +143,9 @@ T Vector<T>::sum()
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const Vector<T> &v)
 {
-    for (auto i = 0; i != v.size(); ++i)
+    for (const auto& ve:v)
     {
-        os << v[i] << std::endl;
+        os << ve << std::endl;
     }
     return os;
 }

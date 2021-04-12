@@ -84,6 +84,7 @@
         "memory_resource": "cpp",
         "string_view": "cpp",
         "fstream": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "*.ipp": "cpp"
     }
 }
