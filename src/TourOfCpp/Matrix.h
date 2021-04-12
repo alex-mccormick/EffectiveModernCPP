@@ -15,8 +15,12 @@ class Matrix {
         explicit Matrix(double);
         Matrix(int, double);
         double idx(int, int) const;
+        double sum();
         double& operator[](int);
         friend Matrix operator+(const Matrix&, const Matrix&);
+        friend double* begin(Matrix& v);
+        friend double* end(Matrix& v);
+
         int size() const;
         bool isEmpty() const;
 

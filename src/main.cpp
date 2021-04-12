@@ -26,6 +26,7 @@ int main(int argc, char** argv)
 		cout << "13. Modules" << endl;
 		cout << "14. Classes" << endl;
 		cout << "15. Move And Copy" << endl;
+		cout << "16. Templates" << endl;
 		cout << "0. Exit" << endl;
 
 		int selection;
@@ -70,6 +71,9 @@ int main(int argc, char** argv)
 			break;
 		case 15:
 			chapter = new A5_MoveAndCopy{};
+			break;
+		case 16:
+			chapter = new A6_Templates{};
 			break;
 
         case 0:

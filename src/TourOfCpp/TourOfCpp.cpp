@@ -334,6 +334,18 @@ void A5_MoveAndCopy::SumMatrixDemo()
     
 }
 
+A6_Templates::A6_Templates()
+    :BookChapter("Templates")
+{
+    this->menuMap["IteratorDemo"] = (BookChapter::MenuFunction) &(A6_Templates::IteratorDemo);
+}
+
+void A6_Templates::IteratorDemo()
+{
+    Matrix m{5, 3.4};
+    std::cout << "The total of all elements in the matrix is " << m.sum() << std::endl;
+}
+
 Engine::Engine(double _torque, double _speed = 100)
 {
     torque = _torque;

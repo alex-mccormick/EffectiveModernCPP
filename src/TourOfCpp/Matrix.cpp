@@ -109,6 +109,15 @@ double Matrix::idx(int i, int j) const
         throw std::out_of_range{"Matrix::operator[] out of range"};
     return data[i * sz + j];
 }
+double Matrix::sum()
+{
+    double runningTotal{0};
+    for (auto& x : *this)
+    {
+        runningTotal += x;
+    }
+    return runningTotal;
+}
 
 Matrix operator+(const Matrix &m1, const Matrix &m2)
 {
@@ -152,6 +161,17 @@ std::ostream& operator<<(std::ostream& os, const Matrix &m)
         os << std::endl;
     }
     return os;
+}
+
+double* begin(Matrix& m)
+{
+    return (m.size() ? &m[0] : nullptr);
+}
+
+double* end(Matrix& m)
+{
+    int sz = m.size();
+    return (sz ? &m[0] + sz*sz : nullptr);
 }
 
 void Matrix::print(std::ostream& os, const Matrix &m)

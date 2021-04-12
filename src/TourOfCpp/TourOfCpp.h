@@ -98,6 +98,15 @@ class A5_MoveAndCopy
         static void SumMatrixDemo(void);
 };
 
+class A6_Templates
+    : public BookChapter
+{
+    public:
+        A6_Templates();
+
+    private:
+        static void IteratorDemo(void);
+};
 
 class Engine
 {
