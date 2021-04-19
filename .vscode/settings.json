@@ -85,6 +85,7 @@
         "string_view": "cpp",
         "fstream": "cpp",
         "cinttypes": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "*.tpp": "cpp"
     }
 }

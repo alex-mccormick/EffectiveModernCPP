@@ -1,10 +1,16 @@
 #include "TourOfCpp.h"
+#include "Matrix.h"
+#include "MyVector.h"
+#include "MyVector.tpp"
+#include "SimpleCollection.h"
 #include <variant>
 #include <sstream>
 #include <memory>
 #include <ctime>
 #include <chrono>
-#include "Matrix.h"
+#include <string>
+
+using namespace std::string_literals; // enables s-suffix for std::string literals
 
 A2_UserDefinedTypes::A2_UserDefinedTypes()
     :BookChapter("User Defined Types")
@@ -29,17 +35,17 @@ void printMyValueStruct(const MyValueStruct & v)
     std::cout << std::endl;
 }
 
-void initMyVectorStruct(MyVectorStruct & v, int sz)
+void initSimpleVectorStruct(SimpleVectorStruct & v, int sz)
 {
     v.data = new double[sz];
     v.sz = sz;
 }
-void destructMyVectorStruct(MyVectorStruct & v)
+void destructSimpleVectorStruct(SimpleVectorStruct & v)
 {
     delete v.data;
 }
 
-MyVector::MyVector(int s)
+SimpleVector::SimpleVector(int s)
     :data{new double[s]}, sz{s}
 {
     data[0] = 1;
@@ -47,26 +53,26 @@ MyVector::MyVector(int s)
     data[2] = 2;
 }
 
-MyVector::~MyVector()
+SimpleVector::~SimpleVector()
 {
     delete data;
 }
 
-int MyVector::size()
+int SimpleVector::size()
 {
     return this->sz;
 }
 
-double& MyVector::operator[](int i)
+double& SimpleVector::operator[](int i)
 {
     return data[i];
 }
 
 void A2_UserDefinedTypes::StructureDemo(void)
 {
-    MyVectorStruct v;
+    SimpleVectorStruct v;
 
-    initMyVectorStruct(v, 3);
+    initSimpleVectorStruct(v, 3);
     v.data[0] = 1;
     v.data[1] = 5;
     v.data[2] = 2;
@@ -78,12 +84,12 @@ void A2_UserDefinedTypes::StructureDemo(void)
     }
     std::cout << std::endl;
 
-    destructMyVectorStruct(v);
+    destructSimpleVectorStruct(v);
 }
 
 void A2_UserDefinedTypes::ClassDemo(void)
 {
-    MyVector v(3);
+    SimpleVector v(3);
 
     v[0] = 1;
     v[1] = 8;
@@ -239,8 +245,8 @@ void A4_Classes::UniquePtrDemo()
             p = new Boeing747{1e5};
         }
         std::clock_t t2 = std::clock();
-        std::cout << "Allocating " << nPlanes << " planes to a vector without using unique_ptr " << GetDuration(t1, t2) << " s" << std::endl;
-        std::cout << "We can prove here that the engines are not cleaned up when the vector goes out of scope" << std::endl;
+        std::cout << "Allocating " << nPlanes << " planes to a MyVector without using unique_ptr " << GetDuration(t1, t2) << " s" << std::endl;
+        std::cout << "We can prove here that the engines are not cleaned up when the MyVector goes out of scope" << std::endl;
     }
 
     {
@@ -253,7 +259,7 @@ void A4_Classes::UniquePtrDemo()
             p = std::move(ptr);
         }
         std::clock_t t2 = std::clock();
-        std::cout << "Allocating " << nPlanes << " planes to a vector by move assignment took " << GetDuration(t1, t2) << " s" << std::endl;
+        std::cout << "Allocating " << nPlanes << " planes to a MyVector by move assignment took " << GetDuration(t1, t2) << " s" << std::endl;
     }
 
     {
@@ -265,7 +271,7 @@ void A4_Classes::UniquePtrDemo()
             planes.push_back(std::make_unique<Boeing747>(1e5));
         }
         std::clock_t t2 = std::clock();
-        std::cout << "Allocating " << nPlanes << " planes to a vector by pushing pointers to the back without reserve " << GetDuration(t1, t2)  << " s" << std::endl;
+        std::cout << "Allocating " << nPlanes << " planes to a MyVector by pushing pointers to the back without reserve " << GetDuration(t1, t2)  << " s" << std::endl;
     }
 
     {        
@@ -278,7 +284,7 @@ void A4_Classes::UniquePtrDemo()
             planes.push_back(std::make_unique<Boeing747>(1e5));
         }
         std::clock_t t2 = std::clock();
-        std::cout << "Allocating " << nPlanes << " planes to a vector by pushing pointers to the back with reserve " << GetDuration(t1, t2)  << " s" << std::endl;
+        std::cout << "Allocating " << nPlanes << " planes to a MyVector by pushing pointers to the back with reserve " << GetDuration(t1, t2)  << " s" << std::endl;
     }
 }
 
@@ -338,12 +344,60 @@ A6_Templates::A6_Templates()
     :BookChapter("Templates")
 {
     this->menuMap["IteratorDemo"] = (BookChapter::MenuFunction) &(A6_Templates::IteratorDemo);
+    this->menuMap["MyVectorTemplate"] = (BookChapter::MenuFunction) &(A6_Templates::MyVectorTemplateDemo);
 }
 
 void A6_Templates::IteratorDemo()
 {
     Matrix m{5, 3.4};
     std::cout << "The total of all elements in the matrix is " << m.sum() << std::endl;
+}
+
+void A6_Templates::MyVectorTemplateDemo()
+{
+    {
+        auto c1 = SimpleCollection(1.2, 2.3);
+        std::cout << "a: " << c1.GetA() << ", b: " << c1.GetB() << std::endl;
+    }
+    {
+        SimpleTemplateCollection<std::string> c2 ("Hello"s, "World"s);
+        std::cout << "a: " << c2.GetA() << ", b: " << c2.GetB() << std::endl;
+    }
+    {
+        // Test the different ways of setting up a MyVector
+        MyVector<double> v1; // Empty
+        std::cout << std::endl << "v1: " << v1 << std::endl;
+    }
+    {
+        MyVector<double> v4(4, 1.2); // Length 4, all values 1.2
+        std::cout << std::endl << "v4: " << v4 << std::endl;
+        std::cout << "The sum of the elements in v4 is " << v4.sum() << std::endl;
+    }
+    {
+        auto v5 = MyVector<double>{5.0, 4.0, 3.0, 1.0, 2.0}; // Initialiser list constructor
+        std::cout << std::endl << "v5: " << v5 << std::endl;
+        std::cout << "The sum of the elements in v5 is " << v5.sum() << std::endl;
+
+        auto v6 = MakeVector(v5.begin(), v5.begin()+2); // Iterator constructor
+        std::cout << std::endl << "v6: " << v6 << std::endl;
+        std::cout << "Iterator constructor: should contain the first two elements of v5"<< std::endl;
+        std::cout << "The sum of the elements in v6 is " << v6.sum() << std::endl;
+
+        MyVector<double> v7(v6); 
+        std::cout << std::endl << "v7: " << v7 << std::endl;
+        std::cout << "Copy constructor from v6, should only have two elements"<< std::endl;
+        std::cout << "The sum of the elements in v7 is " << v7.sum() << std::endl;
+
+        MyVector<double> v8{std::move(v7)}; // Move constructor
+        std::cout << std::endl << "v8: " << v8 << std::endl;
+        std::cout << "Move constructor from v7, v7 should now be empty"<< std::endl;
+        std::cout << std::endl << "v7: " << v7 << std::endl;
+
+        auto v9 = MyVector<double>{v8}; // Copy constructor
+        std::cout << std::endl << "v9: " << v9 << std::endl;
+        std::cout << "Copy constructor from v8, v8 should still be populated" << std::endl;
+        std::cout << std::endl << "v8: " << v8 << std::endl;
+    }
 }
 
 Engine::Engine(double _torque, double _speed = 100)
@@ -420,7 +474,6 @@ AirVehicle::~AirVehicle()
         ++i;
         delete e;
     }
-    // std::cout << "You just deleted an air vehicle with " << i << " engines" << std::endl;
 }
 
 double AirVehicle::Speed() const

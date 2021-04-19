@@ -31,16 +31,16 @@ struct MyValueStruct {
     void print(void);
 };
 
-struct MyVectorStruct {
+struct SimpleVectorStruct {
     double* data;
     int sz;
 };
 
-class MyVector
+class SimpleVector
 {
     public:
-        MyVector(int);
-        ~MyVector();
+        SimpleVector(int);
+        ~SimpleVector();
         double& operator[](int);
         int size();
 
@@ -106,6 +106,7 @@ class A6_Templates
 
     private:
         static void IteratorDemo(void);
+        static void MyVectorTemplateDemo(void);
 };
 
 class Engine
