@@ -345,6 +345,7 @@ A6_Templates::A6_Templates()
 {
     this->menuMap["IteratorDemo"] = (BookChapter::MenuFunction) &(A6_Templates::IteratorDemo);
     this->menuMap["MyVectorTemplate"] = (BookChapter::MenuFunction) &(A6_Templates::MyVectorTemplateDemo);
+    this->menuMap["FunctionDemo"] = (BookChapter::MenuFunction) &(A6_Templates::FunctionDemo);
 }
 
 void A6_Templates::IteratorDemo()
@@ -378,7 +379,7 @@ void A6_Templates::MyVectorTemplateDemo()
         std::cout << std::endl << "v5: " << v5 << std::endl;
         std::cout << "The sum of the elements in v5 is " << v5.sum() << std::endl;
 
-        auto v6 = MakeVector(v5.begin(), v5.begin()+2); // Iterator constructor
+        MyVector<double> v6(v5.begin(), v5.begin()+3); // Iterator constructor
         std::cout << std::endl << "v6: " << v6 << std::endl;
         std::cout << "Iterator constructor: should contain the first two elements of v5"<< std::endl;
         std::cout << "The sum of the elements in v6 is " << v6.sum() << std::endl;
@@ -398,6 +399,52 @@ void A6_Templates::MyVectorTemplateDemo()
         std::cout << "Copy constructor from v8, v8 should still be populated" << std::endl;
         std::cout << std::endl << "v8: " << v8 << std::endl;
     }
+}
+
+template<typename Sequence, typename Value>
+Value sum(const Sequence& s, Value v)
+{
+    for (const auto& x : *s)
+    {
+        v += x;
+    }
+    return v;
+}
+
+void A6_Templates::FunctionDemo()
+{
+    MyVector v{1.0, 2.2, 4.3, 3.1};
+    auto vectorSum = v.sum();
+    auto templateSum = sum(&v, 0.0);
+    auto templateSumIntegerStart = sum(&v, 0);
+    auto templateSumForceArgs = sum<MyVector<double>*, double>(&v, 0);
+
+    std::cout << "Defined a vector v: " << v << std::endl;
+    std::cout << "The vector thinks it sum is " << vectorSum << std::endl;
+    std::cout << "The template sum function gives " << templateSum << std::endl;
+    std::cout << "If we sum with a starting integer, we get " << templateSumIntegerStart << std::endl;
+    std::cout << "Or... we could force a double: " << templateSumForceArgs << std::endl;
+
+    LessThan isNegative{0.0};
+    LessThan isSmall {10};
+
+    auto bNegative1 = isNegative(-1);
+    auto bNegative2 = isNegative(1);
+    std::cout << "We have established that -1 " << (bNegative1 ? "is" : "is not") << " negative" << std::endl;
+    std::cout << "We have established that 1 " << (bNegative2 ? "is" : "is not") << " negative" << std::endl;
+
+    BitChecker lastBit{1};
+    BitChecker penultimateBit{2};
+
+    auto bLastBitTrue3 = lastBit(3);
+    auto bPenultimateBitTrue3 = penultimateBit(3);
+    auto bLastBitTrue5 = lastBit(5);
+    auto bPenultimateBitTrue5 = penultimateBit(5);
+
+    std::cout << "The last bit of 3 is " << bLastBitTrue3 << std::endl;
+    std::cout << "The penultimate bit of 3 is " << bPenultimateBitTrue3 << std::endl;
+    std::cout << "The last bit of 5 is " << bLastBitTrue5 << std::endl;
+    std::cout << "The penultimate bit of 5 is " << bPenultimateBitTrue5 << std::endl;
 }
 
 Engine::Engine(double _torque, double _speed = 100)
@@ -518,3 +565,15 @@ std::string LockheedF35::Sound() const
 {
     return "Bang";
 }
+
+
+template<typename T>
+LessThan<T>::LessThan(const T& v) : comparator{v} {}
+template<typename T>
+constexpr bool LessThan<T>::operator()(const T& x) const {return x < comparator;}
+
+BitChecker::BitChecker(const uint8_t p) : pos{p} {}
+template<typename T>
+constexpr bool BitChecker::operator()(const T& x) const {return x & (1 << (pos-1));}
+// This works, but is undefined, unportable, and really messy
+// constexpr bool BitChecker::operator()(T x) const {return (*reinterpret_cast<int*>(&x) & (1 << (pos-1)));}

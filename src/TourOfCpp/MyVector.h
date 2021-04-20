@@ -53,7 +53,7 @@ class MyVector {
         MyVector(std::initializer_list<T>);
 
         template<typename Iter>
-        friend auto MakeVector(Iter, Iter) -> MyVector<typename Iter::value_type>;
+        MyVector(Iter s, Iter e);
         T sum();
         T& operator[](int);
 

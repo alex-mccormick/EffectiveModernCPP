@@ -107,6 +107,7 @@ class A6_Templates
     private:
         static void IteratorDemo(void);
         static void MyVectorTemplateDemo(void);
+        static void FunctionDemo(void);
 };
 
 class Engine
@@ -196,4 +197,24 @@ class LockheedF35
         LockheedF35(double);
 
         std::string Sound() const override;
+};
+
+template<typename T>
+class LessThan {
+    private:
+        const T comparator;
+
+    public:
+        LessThan(const T&);
+        constexpr bool operator()(const T&) const;
+};
+
+class BitChecker {
+    private:
+        const uint8_t pos;
+    public:
+        BitChecker(const uint8_t);
+        template<typename T>
+        constexpr bool operator()(const T&) const;
+        // constexpr bool operator()(T) const;
 };

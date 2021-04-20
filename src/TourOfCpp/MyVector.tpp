@@ -89,24 +89,24 @@ MyVector<T>::MyVector(std::initializer_list<T> init)
     }
 }
 
+template<typename T>
 template<typename Iter>
-auto MakeVector(Iter s, Iter e) -> MyVector<typename Iter::value_type>
+MyVector<T>::MyVector(Iter s, Iter e)
 {
     int i{0};
     for (auto x = s; x != e; ++x)
     {
         ++i;
     }
-    auto myVec = new MyVector<typename Iter::value_type>(i);
+    sz = i;
+    data = std::make_unique<T[]>(i);
 
     i=0;
     for (auto x = s; x != e; ++x)
     {
-        myVec->data[i] = x.get();
+        data[i] = x.get();
         ++i;
     }
-
-    return *myVec;
 }
 
 template<typename T>
