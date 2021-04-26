@@ -152,6 +152,18 @@ typename MyVector<T>::Iterator MyVector<T>::end()
 }
 
 template<typename T>
+typename MyVector<T>::Const_Iterator MyVector<T>::begin() const
+{
+    return MyVector<T>::Const_Iterator(sz ? data.get() : nullptr);
+}
+
+template<typename T>
+typename MyVector<T>::Const_Iterator MyVector<T>::end() const
+{
+    return MyVector<T>::Const_Iterator(sz ? data.get() + sz : nullptr);
+}
+
+template<typename T>
 std::ostream& operator<<(std::ostream& os, MyVector<T> &v)
 {
     for (const auto ve:v)

@@ -346,6 +346,7 @@ A6_Templates::A6_Templates()
     this->menuMap["IteratorDemo"] = (BookChapter::MenuFunction) &(A6_Templates::IteratorDemo);
     this->menuMap["MyVectorTemplate"] = (BookChapter::MenuFunction) &(A6_Templates::MyVectorTemplateDemo);
     this->menuMap["FunctionDemo"] = (BookChapter::MenuFunction) &(A6_Templates::FunctionDemo);
+    this->menuMap["LambdaDemo"] = (BookChapter::MenuFunction) &(A6_Templates::LambdaDemo);
 }
 
 void A6_Templates::IteratorDemo()
@@ -446,6 +447,65 @@ void A6_Templates::FunctionDemo()
     std::cout << "The last bit of 5 is " << bLastBitTrue5 << std::endl;
     std::cout << "The penultimate bit of 5 is " << bPenultimateBitTrue5 << std::endl;
 }
+
+template<typename C, typename P>
+int count(const C& c, P pred)
+{
+    int cnt = 0;
+    for (const auto& x:c)
+        if (pred(x))
+            ++cnt;
+    
+    return cnt;
+}
+
+bool lessThanZeroLocalFunction(int x)
+{
+    return x < 0;
+}
+
+void A6_Templates::LambdaDemo()
+{
+    MyVector v{-1, 1, 2, -5, 3, -4, 1, 0};
+    std::cout << "Defined a vector v: " << v << std::endl;
+
+    LessThan isNegative{0.0};
+    auto countNegative = count(v, isNegative);
+    std::cout << "According to the functor, v contains " << countNegative << " negative numbers" << std::endl;
+
+    auto countNegativeLambda = count(v, [](int x){ return x < 0; });
+    std::cout << "According to the lambda, v contains " << countNegativeLambda << " negative numbers" << std::endl;
+
+    // Define the lambda externally
+    auto lessThanLambda = [](auto a){ return a < 0; };
+    auto countNegativeLambdaVariable = count(v, lessThanLambda);
+    std::cout << "According to the pre-defined lambda, v contains " << countNegativeLambdaVariable << " negative numbers" << std::endl;
+
+    // Can't do this
+    // bool lessThanExplicitLambda(int) = [&](int x){return x <= breakPoint;};
+
+    int breakPoint = 0;
+    // Passing by value here captures the value at the time - it will stay zero
+    auto lessThanBreakpointRef = [&](auto a){ return a < breakPoint; };
+    auto lessThanBreakpointVal = [=](auto b){ return b < breakPoint; };
+    auto countLessThanBreakpointRef1 = count(v, lessThanBreakpointRef);
+    auto countLessThanBreakpointVal1 = count(v, lessThanBreakpointVal);
+    std::cout << "v contains " << countLessThanBreakpointRef1 << " values less than " << breakPoint << " (by ref)" << std::endl;
+    std::cout << "v contains " << countLessThanBreakpointVal1 << " values less than " << breakPoint << " (by val)" << std::endl;
+
+    breakPoint = 4;
+
+    auto countLessThanBreakpointRef2 = count(v, lessThanBreakpointRef);
+    auto countLessThanBreakpointVal2 = count(v, lessThanBreakpointVal);
+    std::cout << "v contains " << countLessThanBreakpointRef2 << " values less than " << breakPoint << " (by ref)" << std::endl;
+    std::cout << "v contains " << countLessThanBreakpointVal2 << " values less than " << breakPoint << " (by val)" << std::endl;
+
+    // This can also be implemented using a function pointer
+    auto countLessThanZeroLocalFunction = count(v, lessThanZeroLocalFunction);
+    std::cout << "According the local function, v contains " << countLessThanZeroLocalFunction << " negative numbers" << std::endl;
+
+}
+
 
 Engine::Engine(double _torque, double _speed = 100)
 {

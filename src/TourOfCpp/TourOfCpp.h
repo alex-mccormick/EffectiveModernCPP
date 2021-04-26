@@ -108,6 +108,7 @@ class A6_Templates
         static void IteratorDemo(void);
         static void MyVectorTemplateDemo(void);
         static void FunctionDemo(void);
+        static void LambdaDemo(void);
 };
 
 class Engine

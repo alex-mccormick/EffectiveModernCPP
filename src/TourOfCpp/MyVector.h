@@ -38,6 +38,33 @@ class MyVector {
 
                 pointer m_ptr;
         };
+        struct Const_Iterator 
+        {
+            using iterator_category = std::forward_iterator_tag;
+            using difference_type   = std::ptrdiff_t;
+            using value_type        = T;
+            using pointer           = const T*;  // or also value_type*
+            using reference         = const T&;  // or also value_type&
+
+            Const_Iterator(pointer ptr) : m_ptr(ptr) {}
+            reference get() const {return *m_ptr;};
+            reference operator*() const { return *m_ptr; }
+            pointer operator->() { return m_ptr; }
+
+            // Prefix increment
+            Const_Iterator& operator++() { m_ptr++; return *this; }  
+            Const_Iterator operator+(int a) { m_ptr+=a; return *this; }  
+
+            // Postfix increment
+            Const_Iterator operator++(int) { Const_Iterator tmp = *this; ++(*this); return tmp; }
+
+            friend bool operator== (const Const_Iterator& a, const Const_Iterator& b) { return a.m_ptr == b.m_ptr; };
+            friend bool operator!= (const Const_Iterator& a, const Const_Iterator& b) { return a.m_ptr != b.m_ptr; };    
+
+            private:
+
+                pointer m_ptr;
+        };
 
         using value_type = T;
 
@@ -62,6 +89,8 @@ class MyVector {
 
         Iterator begin();
         Iterator end();
+        Const_Iterator begin() const;
+        Const_Iterator end() const;
 
     private:
         std::unique_ptr<T[]> data;
