@@ -110,6 +110,21 @@ MyVector<T>::MyVector(Iter s, Iter e)
 }
 
 template<typename T>
+void MyVector<T>::append(T newValue)
+{
+    ++sz;
+    auto oldData{data.get()};
+    data = std::make_unique<T[]>(sz);
+    
+    int i = 0;
+    for (; i != sz-1; ++i)
+    {
+        data[i] = oldData[i];
+    }
+    data[++i] = newValue;
+}
+
+template<typename T>
 int MyVector<T>::size() const
 {
     return sz;
@@ -177,4 +192,112 @@ template<typename T>
 void print(std::ostream& os, MyVector<T> &v)
 {
     os << v << std::endl;
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::MyMap()
+    : _keys{new MyVector<TKey>{}}, _vals{new MyVector<TValue>{}}, sz{0}
+{
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::MyMap(MyVector<TKey> keys, MyVector<TValue> values)
+    : _keys{keys}, _vals{values}, sz{keys.size()}
+{
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::MyMap(std::initializer_list<std::pair<TKey, TValue>> initList)
+    : sz{initList.size()}
+{
+    for (const auto pair : initList)
+    {
+        this->Add(pair);
+    }
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::value_type pair)
+{
+    _keys.append(pair.first);
+    _vals.append(pair.second);
+    ++sz;
+    return *this;
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::pointer ptrToPair)
+{
+    _keys.append(pair->first);
+    _vals.append(pair->second);
+    ++sz;
+    return *this;
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::reference referenceOfPair)
+{
+    // Force the copy constructor
+    auto newPair = std::pair(std::const_cast(referenceOfPair));
+
+    _keys.append(newPair.first);
+    _vals.append(newPair.second);
+    ++sz;
+    return *this;
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::const_reference constReferenceOfPair)
+{
+    // Force the copy constructor
+    auto newPair = std::pair(constReferenceOfPair);
+
+    _keys.append(newPair.first);
+    _vals.append(newPair.second);
+    ++sz;
+    return *this;
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::key_type k, MyMap<TKey, TValue>::pointer v)
+{
+    _keys.append(k);
+    _vals.append(*v);
+    ++sz;
+    return *this;
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::key_type k, MyMap<TKey, TValue>::mapped_type v)
+{
+    _keys.append(k);
+    _vals.append(v);
+    ++sz;
+    return *this;
+}
+
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::value_type MyMap<TKey, TValue>::get(MyMap<TKey, TValue>::key_type searchK) const
+{
+    return this[searchK];
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::reference MyMap<TKey, TValue>::operator[](MyMap<TKey, TValue>::key_type searchK)
+{
+    int i = 0;
+    for (const auto& k : _keys)
+    {
+        ++i;
+        if (k == searchK)
+            return &_vals[i];
+    }
+    return nullptr;
+}
+
+template<typename TKey, typename TValue>
+std::size_t MyMap<TKey, TValue>::size() const
+{
+    return sz;
 }

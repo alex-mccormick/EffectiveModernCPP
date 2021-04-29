@@ -347,6 +347,7 @@ A6_Templates::A6_Templates()
     this->menuMap["MyVectorTemplate"] = (BookChapter::MenuFunction) &(A6_Templates::MyVectorTemplateDemo);
     this->menuMap["FunctionDemo"] = (BookChapter::MenuFunction) &(A6_Templates::FunctionDemo);
     this->menuMap["LambdaDemo"] = (BookChapter::MenuFunction) &(A6_Templates::LambdaDemo);
+    this->menuMap["AliasDemo"] = (BookChapter::MenuFunction) &(A6_Templates::AliasDemo);
 }
 
 void A6_Templates::IteratorDemo()
@@ -506,6 +507,11 @@ void A6_Templates::LambdaDemo()
 
 }
 
+void A6_Templates::AliasDemo()
+{
+
+    
+}
 
 Engine::Engine(double _torque, double _speed = 100)
 {

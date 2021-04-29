@@ -80,9 +80,11 @@ class MyVector {
         MyVector(std::initializer_list<T>);
 
         template<typename Iter>
-        MyVector(Iter s, Iter e);
+        MyVector(Iter, Iter);
         T sum();
         T& operator[](int);
+
+        void append(T);
 
         int size() const;
         bool isEmpty() const;
@@ -96,4 +98,51 @@ class MyVector {
         std::unique_ptr<T[]> data;
         int sz;
 
+};
+
+template<typename TKey, typename TVal>
+class MyMap {
+
+    public:
+
+        using map_type = MyMap<TKey, TVal>;
+        using key_type = const TKey;
+        using mapped_type = TVal;
+        using value_type = std::pair<key_type, mapped_type>;
+        using pointer = value_type*;
+        using const_pointer = const value_type*;
+        using reference = value_type&;
+        using const_reference = const value_type&;
+        using iterator = pointer;
+        using const_iterator = const_pointer;
+
+        Map();
+        Map(MyVector<TKey>, MyVector<TVal>);
+        Map(std::initializer_list<value_type>);
+
+        // TODO: copy and move constructors, mirroring vector implementation
+
+        map_type& Add(value_type);
+        map_type& Add(pointer);
+        map_type& Add(reference);
+        map_type& Add(const_reference);
+        map_type& Add(key_type, mapped_type);
+
+        reference operator[](key_type);
+
+        value_type get(key_type) const;
+
+        bool isKey(key_type) const;
+        
+        iterator begin();
+        const_iterator begin();
+        iterator end();
+        const_iterator end();
+        
+        std::size_t size() const;
+        
+    private:
+        MyVector<key_type> _keys;
+        MyVector<mapped_type> _vals;
+        int sz;
 };
