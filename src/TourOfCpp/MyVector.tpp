@@ -112,16 +112,19 @@ MyVector<T>::MyVector(Iter s, Iter e)
 template<typename T>
 void MyVector<T>::append(T newValue)
 {
+    // TODO: fix the append here?!
+    auto oldSz = sz;
+    T* oldData = new T[oldSz];
+    memcpy(oldData, data.get(), oldSz*sizeof(T));
+
     ++sz;
-    auto oldData{data.get()};
     data = std::make_unique<T[]>(sz);
     
-    int i = 0;
-    for (; i != sz-1; ++i)
+    for (int i = 0; i != oldSz; ++i)
     {
         data[i] = oldData[i];
     }
-    data[++i] = newValue;
+    data[oldSz] = newValue;
 }
 
 template<typename T>
@@ -196,18 +199,24 @@ void print(std::ostream& os, MyVector<T> &v)
 
 template<typename TKey, typename TValue>
 MyMap<TKey, TValue>::MyMap()
-    : _keys{new MyVector<TKey>{}}, _vals{new MyVector<TValue>{}}, sz{0}
+    : _keys(new MyVector<TKey>{}), _vals(new MyVector<TValue>{}), sz{0}
 {
 }
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::MyMap(MyVector<TKey> keys, MyVector<TValue> values)
-    : _keys{keys}, _vals{values}, sz{keys.size()}
+MyMap<TKey, TValue>::MyMap(MyVector<TKey>&& keys, MyVector<TValue>&& values)
+    : _keys(keys), _vals(values), sz{keys.size()}
 {
 }
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::MyMap(std::initializer_list<std::pair<TKey, TValue>> initList)
+MyMap<TKey, TValue>::MyMap(const MyVector<TKey>& keys, const MyVector<TValue>& values)
+    : _keys(keys), _vals(values), sz{keys.size()}
+{
+}
+
+template<typename TKey, typename TValue>
+MyMap<TKey, TValue>::MyMap(std::initializer_list<typename MyMap<TKey, TValue>::value_type> initList)
     : sz{initList.size()}
 {
     for (const auto pair : initList)
@@ -217,28 +226,28 @@ MyMap<TKey, TValue>::MyMap(std::initializer_list<std::pair<TKey, TValue>> initLi
 }
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::value_type pair)
+typename MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(typename MyMap<TKey, TValue>::value_type _pair)
 {
-    _keys.append(pair.first);
-    _vals.append(pair.second);
+    _keys.append(_pair.first);
+    _vals.append(_pair.second);
     ++sz;
     return *this;
 }
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::pointer ptrToPair)
+typename MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(typename MyMap<TKey, TValue>::pointer ptrToPair)
 {
-    _keys.append(pair->first);
-    _vals.append(pair->second);
+    _keys.append(ptrToPair->first);
+    _vals.append(ptrToPair->second);
     ++sz;
     return *this;
 }
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::reference referenceOfPair)
+typename MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(typename MyMap<TKey, TValue>::reference referenceOfPair)
 {
     // Force the copy constructor
-    auto newPair = std::pair(std::const_cast(referenceOfPair));
+    auto newPair = std::pair<TKey, TValue>{referenceOfPair};
 
     _keys.append(newPair.first);
     _vals.append(newPair.second);
@@ -247,7 +256,7 @@ MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::ref
 }
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::const_reference constReferenceOfPair)
+typename MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(typename MyMap<TKey, TValue>::const_reference constReferenceOfPair)
 {
     // Force the copy constructor
     auto newPair = std::pair(constReferenceOfPair);
@@ -259,7 +268,7 @@ MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::con
 }
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::key_type k, MyMap<TKey, TValue>::pointer v)
+typename MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(typename MyMap<TKey, TValue>::key_type k, typename MyMap<TKey, TValue>::pointer v)
 {
     _keys.append(k);
     _vals.append(*v);
@@ -268,7 +277,7 @@ MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::key
 }
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::key_type k, MyMap<TKey, TValue>::mapped_type v)
+typename MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(typename MyMap<TKey, TValue>::key_type k, typename MyMap<TKey, TValue>::mapped_type v)
 {
     _keys.append(k);
     _vals.append(v);
@@ -278,26 +287,45 @@ MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(MyMap<TKey, TValue>::key
 
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::value_type MyMap<TKey, TValue>::get(MyMap<TKey, TValue>::key_type searchK) const
+typename MyMap<TKey, TValue>::map_reference MyMap<TKey, TValue>::get(typename MyMap<TKey, TValue>::key_type searchK) const
 {
-    return this[searchK];
+    return (*this)[searchK];
+}
+
+
+template<typename TKey, typename TValue>
+typename MyMap<TKey, TValue>::map_reference MyMap<TKey, TValue>::get(typename MyMap<TKey, TValue>::key_type searchK)
+{
+    return (*this)[searchK];
 }
 
 template<typename TKey, typename TValue>
-MyMap<TKey, TValue>::reference MyMap<TKey, TValue>::operator[](MyMap<TKey, TValue>::key_type searchK)
+typename MyMap<TKey, TValue>::map_reference MyMap<TKey, TValue>::operator[](typename MyMap<TKey, TValue>::key_type searchK)
 {
     int i = 0;
     for (const auto& k : _keys)
     {
-        ++i;
         if (k == searchK)
-            return &_vals[i];
+            return _vals[i];
+        ++i;
     }
-    return nullptr;
+    throw std::invalid_argument("Parameter not found");
 }
 
 template<typename TKey, typename TValue>
 std::size_t MyMap<TKey, TValue>::size() const
 {
     return sz;
+}
+
+template<typename TKey, typename TValue>
+typename MyMap<TKey, TValue>::iterator MyMap<TKey, TValue>::begin()
+{
+    return MyMap<TKey, TValue>::iterator(sz ?  &_keys[0]: nullptr, this);
+}
+
+template<typename TKey, typename TValue>
+typename MyMap<TKey, TValue>::iterator MyMap<TKey, TValue>::end()
+{
+    return MyMap<TKey, TValue>::iterator(sz ? &_keys[0] + sz : nullptr, this);
 }

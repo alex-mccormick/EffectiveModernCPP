@@ -3,8 +3,9 @@
 #include <memory>
 #include <initializer_list>
 #include <iterator>
-#include <iterator> // For std::forward_iterator_tag
 #include <cstddef>  // For std::ptrdiff_t
+#include <utility>
+#include <exception>
 
 template<typename T>
 class MyVector {
@@ -106,19 +107,48 @@ class MyMap {
     public:
 
         using map_type = MyMap<TKey, TVal>;
-        using key_type = const TKey;
+        using key_type = TKey;
         using mapped_type = TVal;
         using value_type = std::pair<key_type, mapped_type>;
         using pointer = value_type*;
         using const_pointer = const value_type*;
+        using map_reference = mapped_type&;
         using reference = value_type&;
         using const_reference = const value_type&;
-        using iterator = pointer;
-        using const_iterator = const_pointer;
 
-        Map();
-        Map(MyVector<TKey>, MyVector<TVal>);
-        Map(std::initializer_list<value_type>);
+        
+        struct iterator {
+
+            iterator(TKey* it, map_type* mapRef) : ptr{it}, map{mapRef}
+            {
+                v = value_type();
+            };
+
+            void refreshPair() { v = (ptr ? std::make_pair(*ptr, map->get(*ptr)) : value_type()); }
+            value_type get() const { refreshPair(); return v;}
+            value_type operator*() { refreshPair(); return v; }
+            pointer operator->() { refreshPair(); return &v; }
+
+            // Prefix increment
+            iterator& operator++() { ptr++; return *this; }  
+            iterator operator+(int a) { ptr+=a; return *this; }  
+
+            // Postfix increment
+            iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+
+            friend bool operator== (const iterator& a, const iterator& b) { return a.ptr == b.ptr; };
+            friend bool operator!= (const iterator& a, const iterator& b) { return a.ptr != b.ptr; };    
+
+            private:
+                value_type v;
+                TKey* ptr;
+                map_type * map;
+        };
+
+        MyMap();
+        MyMap(const MyVector<TKey>&, const MyVector<TVal>&);
+        MyMap(MyVector<TKey>&&, MyVector<TVal>&&);
+        MyMap(std::initializer_list<value_type>);
 
         // TODO: copy and move constructors, mirroring vector implementation
 
@@ -126,18 +156,20 @@ class MyMap {
         map_type& Add(pointer);
         map_type& Add(reference);
         map_type& Add(const_reference);
+        map_type& Add(key_type, pointer);
         map_type& Add(key_type, mapped_type);
 
-        reference operator[](key_type);
+        map_reference operator[](key_type);
 
-        value_type get(key_type) const;
+        map_reference get(key_type);
+        map_reference get(key_type) const;
 
         bool isKey(key_type) const;
         
         iterator begin();
-        const_iterator begin();
+        // const_iterator begin();
         iterator end();
-        const_iterator end();
+        // const_iterator end();
         
         std::size_t size() const;
         

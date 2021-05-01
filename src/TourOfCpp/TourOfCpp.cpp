@@ -401,6 +401,13 @@ void A6_Templates::MyVectorTemplateDemo()
         std::cout << "Copy constructor from v8, v8 should still be populated" << std::endl;
         std::cout << std::endl << "v8: " << v8 << std::endl;
     }
+    {
+        auto v10 = MyVector<double>{5.0, 4.0, 3.0, 1.0, 2.0}; // Initialiser list constructor
+        std::cout << std::endl << "v10: " << v10 << std::endl;
+        v10.append(-10);
+        std::cout << std::endl << "v10: " << v10 << std::endl;
+    }
+
 }
 
 template<typename Sequence, typename Value>
@@ -509,8 +516,39 @@ void A6_Templates::LambdaDemo()
 
 void A6_Templates::AliasDemo()
 {
+    auto keys = MyVector<int>{5, 4, 3, 2, 1};
+    auto values = MyVector<double>{5.0, 4.0, 3.0, 1.0, 2.0};
 
-    
+    auto map = MyMap<int,double>(std::move(keys), std::move(values));
+
+    std::cout << "I found a value in my map! At location 4, the value is " << map[4] << std::endl;
+    map[2] = -2;
+    std::cout << "I changed a value in my map! At location 2, the value is now " << map[2] << std::endl;
+
+    map.Add(10, 15.4);
+    std::cout << "I added a value to my map! At location 10, the value is " << map[10] << std::endl;
+
+    std::cout << "I can print the whole map" << std::endl;
+    for (auto [k, v] : map)
+    {
+        std::cout << "The value at " << k << " is " << v << std::endl;
+    }
+
+    // String keys
+    const auto strkeys = MyVector<std::string>{"a"s, "b"s, "d"s, "f"s, "k"s};
+    const auto strvalues = MyVector<double>{5.0, 4.0, 3.0, 1.0, 2.0};
+    auto stringMap = MyMap(strkeys, strvalues);
+
+    stringMap.Add("new"s, 42);
+    std::cout << "I added a value to my map! At location \"new\", the value is " << stringMap["new"s] << std::endl;
+    std::cout << "I can print the whole map" << std::endl;
+    for (auto [k, v] : stringMap)
+    {
+        std::cout << "The value at " << k << " is " << v << std::endl;
+    }
+
+
+
 }
 
 Engine::Engine(double _torque, double _speed = 100)
