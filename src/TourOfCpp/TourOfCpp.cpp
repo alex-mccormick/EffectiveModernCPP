@@ -535,8 +535,8 @@ void A6_Templates::AliasDemo()
     }
 
     // String keys
-    const auto strkeys = MyVector<std::string>{"a"s, "b"s, "d"s, "f"s, "k"s};
-    const auto strvalues = MyVector<double>{5.0, 4.0, 3.0, 1.0, 2.0};
+    const auto strkeys = MyVector{"a"s, "b"s, "d"s, "f"s, "k"s};
+    const auto strvalues = MyVector{5.0, 4.0, 3.0, 1.0, 2.0};
     auto stringMap = MyMap(strkeys, strvalues);
 
     stringMap.Add("new"s, 42);
@@ -546,8 +546,6 @@ void A6_Templates::AliasDemo()
     {
         std::cout << "The value at " << k << " is " << v << std::endl;
     }
-
-
 
 }
 
