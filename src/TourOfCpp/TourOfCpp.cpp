@@ -535,6 +535,7 @@ void A6_Templates::AliasDemo()
     }
 
     // String keys
+    // Also using copy constructor: note it doesn't make a difference
     const auto strkeys = MyVector{"a"s, "b"s, "d"s, "f"s, "k"s};
     const auto strvalues = MyVector{5.0, 4.0, 3.0, 1.0, 2.0};
     auto stringMap = MyMap(strkeys, strvalues);
@@ -546,6 +547,11 @@ void A6_Templates::AliasDemo()
     {
         std::cout << "The value at " << k << " is " << v << std::endl;
     }
+
+    // Aliassed type
+    const auto intValues = MyVector<double>{1, 2, 3, 4, 6}; // Values are traditionally ints, but we want a double map
+    auto doubleMap = MyDoubleMap<std::string>(strkeys, intValues);
+    doubleMap.print();
 
 }
 

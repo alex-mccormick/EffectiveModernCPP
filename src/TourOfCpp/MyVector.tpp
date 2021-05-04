@@ -112,7 +112,6 @@ MyVector<T>::MyVector(Iter s, Iter e)
 template<typename T>
 void MyVector<T>::append(T newValue)
 {
-    // TODO: fix the append here?!
     auto oldSz = sz;
     T* oldData = new T[oldSz];
     memcpy(oldData, data.get(), oldSz*sizeof(T));
@@ -140,6 +139,14 @@ bool MyVector<T>::isEmpty() const
 
 template<typename T>
 T& MyVector<T>::operator[](int i)
+{
+    if (i < 0 || i >= sz)
+        throw std::out_of_range{"MyVector<T>::operator[] out of range"};
+    return data.get()[i];
+}
+
+template<typename T>
+T& MyVector<T>::operator[](int i) const
 {
     if (i < 0 || i >= sz)
         throw std::out_of_range{"MyVector<T>::operator[] out of range"};
@@ -285,22 +292,32 @@ typename MyMap<TKey, TValue>::map_type& MyMap<TKey, TValue>::Add(typename MyMap<
     return *this;
 }
 
-
+template<typename TKey, typename TValue>
+typename MyMap<TKey, TValue>::map_reference MyMap<TKey, TValue>::get(typename MyMap<TKey, TValue>::key_type searchK)
+{
+    return (*this)[searchK];
+}
 template<typename TKey, typename TValue>
 typename MyMap<TKey, TValue>::map_reference MyMap<TKey, TValue>::get(typename MyMap<TKey, TValue>::key_type searchK) const
 {
     return (*this)[searchK];
 }
 
-
 template<typename TKey, typename TValue>
-typename MyMap<TKey, TValue>::map_reference MyMap<TKey, TValue>::get(typename MyMap<TKey, TValue>::key_type searchK)
+typename MyMap<TKey, TValue>::map_reference MyMap<TKey, TValue>::operator[](typename MyMap<TKey, TValue>::key_type searchK)
 {
-    return (*this)[searchK];
+    int i = 0;
+    for (const auto& k : _keys)
+    {
+        if (k == searchK)
+            return _vals[i];
+        ++i;
+    }
+    throw std::invalid_argument("Parameter not found");
 }
 
 template<typename TKey, typename TValue>
-typename MyMap<TKey, TValue>::map_reference MyMap<TKey, TValue>::operator[](typename MyMap<TKey, TValue>::key_type searchK)
+typename MyMap<TKey, TValue>::map_reference MyMap<TKey, TValue>::operator[](typename MyMap<TKey, TValue>::key_type searchK) const
 {
     int i = 0;
     for (const auto& k : _keys)
@@ -329,3 +346,33 @@ typename MyMap<TKey, TValue>::iterator MyMap<TKey, TValue>::end()
 {
     return MyMap<TKey, TValue>::iterator(sz ? &_keys[0] + sz : nullptr, this);
 }
+
+template<typename TKey, typename TValue>
+typename MyMap<TKey, TValue>::const_iterator MyMap<TKey, TValue>::begin() const
+{
+    const TKey* keyPtr = &_keys[0];
+    return MyMap<TKey, TValue>::const_iterator(sz ?  keyPtr: nullptr, this);
+}
+
+template<typename TKey, typename TValue>
+typename MyMap<TKey, TValue>::const_iterator MyMap<TKey, TValue>::end() const
+{
+    const TKey* keyPtr = &_keys[0];
+    return MyMap<TKey, TValue>::const_iterator(sz ? keyPtr + sz : nullptr, this);
+}
+
+template<typename TKey, typename TValue>
+void MyMap<TKey, TValue>::print() const
+{
+    for (const auto [k, v] : *this)
+    {
+        if constexpr(std::is_pod<TKey>::value)
+            std::cout << k << ": " << v << std::endl;
+        else
+            std::cout << "The value at " << k << " is " << v << std::endl;
+    }
+}
+
+
+template<typename keyType>
+using MyDoubleMap = MyMap<keyType, double>;

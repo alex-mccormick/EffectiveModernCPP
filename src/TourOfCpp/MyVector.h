@@ -84,6 +84,7 @@ class MyVector {
         MyVector(Iter, Iter);
         T sum();
         T& operator[](int);
+        T& operator[](int) const;
 
         void append(T);
 
@@ -145,6 +146,34 @@ class MyMap {
                 map_type * map;
         };
 
+        struct const_iterator {
+
+            const_iterator(const TKey* it, const map_type* mapRef) : ptr{it}, map{mapRef}
+            {
+                v = value_type();
+            };
+
+            void refreshPair() { v = (ptr ? std::make_pair(*ptr, map->get(*ptr)) : value_type()); }
+            const value_type get() const { refreshPair(); return v;}
+            const value_type operator*() { refreshPair(); return v; }
+            const_pointer operator->() { refreshPair(); return &v; }
+
+            // Prefix increment
+            const_iterator& operator++() { ptr++; return *this; }  
+            const_iterator operator+(int a) { ptr+=a; return *this; }  
+
+            // Postfix increment
+            const_iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+
+            friend bool operator== (const const_iterator& a, const const_iterator& b) { return a.ptr == b.ptr; };
+            friend bool operator!= (const const_iterator& a, const const_iterator& b) { return a.ptr != b.ptr; };    
+
+            private:
+                value_type v;
+                const TKey* ptr;
+                const map_type * map;
+        };
+
         MyMap();
         MyMap(const MyVector<TKey>&, const MyVector<TVal>&);
         MyMap(MyVector<TKey>&&, MyVector<TVal>&&);
@@ -160,18 +189,20 @@ class MyMap {
         map_type& Add(key_type, mapped_type);
 
         map_reference operator[](key_type);
-
+        map_reference operator[](key_type) const;
         map_reference get(key_type);
         map_reference get(key_type) const;
 
         bool isKey(key_type) const;
         
         iterator begin();
-        // const_iterator begin();
+        const_iterator begin() const;
         iterator end();
-        // const_iterator end();
+        const_iterator end() const;
         
         std::size_t size() const;
+
+        void print() const;
         
     private:
         MyVector<key_type> _keys;
