@@ -1,5 +1,7 @@
 #include "../include/stdafx.h"
 #include "../Generic/BookChapter.h"
+#include "MyVector.h"
+#include "MyVector.tpp"
 
 enum class TrafficLight {
     Red=0,
@@ -112,6 +114,18 @@ class A6_Templates
         static void AliasDemo(void);
 };
 
+class A7_Concepts
+    : public BookChapter
+{
+    public:
+        A7_Concepts();
+
+    private:
+        static void VariadicTemplateDemo(void);
+        static void FoldDemo(void);
+        static void ForwardingDemo(void);
+};
+
 class Engine
 {
     public:
@@ -174,7 +188,11 @@ class AirVehicle
 {
     public:
         AirVehicle(double, std::initializer_list<Engine*>);
+        AirVehicle() {};
         ~AirVehicle();
+
+        AirVehicle(const AirVehicle&); // Copy constructor
+        AirVehicle& operator=(const AirVehicle&); // Copy assignment
 
         std::string Sound() const override;
         double Speed() const override;
@@ -190,6 +208,7 @@ class Boeing747
 {
     public:
         Boeing747(double);
+        Boeing747() : AirVehicle() {};
 };
 
 class LockheedF35
@@ -197,9 +216,41 @@ class LockheedF35
 {
     public:
         LockheedF35(double);
+        LockheedF35() : AirVehicle() {};
 
         std::string Sound() const override;
 };
+
+class Glider
+    : public AirVehicle
+{
+    public:
+        Glider(double, std::string);
+        Glider() : AirVehicle() {_name="Default"; };
+        ~Glider();
+        Glider(const Glider&); // Copy constructor
+        Glider& operator=(const Glider&); // Copy assignment
+
+        std::string Sound() const override;
+
+    private:
+        std::string _name;
+};
+
+template<typename AirVehicle>
+class AircraftCarrier
+{
+    public:
+        AircraftCarrier();
+
+        template<typename... VehicleArgs>
+        void Add(VehicleArgs&&...);
+        std::string Print();
+
+    private:
+        MyVector<AirVehicle> _aircraft;
+};
+
 
 template<typename T>
 class LessThan {

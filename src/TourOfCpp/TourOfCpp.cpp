@@ -1,9 +1,9 @@
 #include "TourOfCpp.h"
 #include "Matrix.h"
-#include "MyVector.h"
 #include "MyVector.tpp"
 #include "SimpleCollection.h"
 #include <variant>
+#include <vector>
 #include <sstream>
 #include <memory>
 #include <ctime>
@@ -555,6 +555,111 @@ void A6_Templates::AliasDemo()
 
 }
 
+void printVariadic() {};
+template<typename T, typename... Tail>
+void printVariadic(T head, Tail... tail)
+{
+    std::cout << head << '\t';
+    printVariadic(tail...);
+}
+
+template<typename T, typename... Tail>
+void printVariadicRecurse(T head, Tail... tail)
+{
+    std::cout << head << '\t';
+    // Use constexpr to prevent the code from ever even being generated
+    // We will never need to call this function with fewer than 1 parameters
+    if constexpr(sizeof...(tail) > 0)
+        printVariadicRecurse(tail...);
+    else
+        std::cout << '\n';
+}
+
+template<typename... T>
+double sumPack(T... v)
+{
+    return (v + ... + 0.0);
+}
+
+template<typename T, typename... Args>
+std::vector<T> generateVector(T first, Args... v)
+{
+    std::vector<T> initVector{first};
+    if constexpr(sizeof...(v) > 0)
+    {
+        auto laterVector = generateVector(v...);
+        initVector.insert(initVector.end(), laterVector.begin(), laterVector.end());
+    }
+
+    return initVector;
+}
+
+template<typename ...T>
+void printFold(T&&... args)
+{
+    (std::cout << ... << args) << '\n';
+}
+
+A7_Concepts::A7_Concepts()
+    :BookChapter("Concepts")
+{
+    this->menuMap["VariadicTemplateDemo"] = (BookChapter::MenuFunction) &(A7_Concepts::VariadicTemplateDemo);
+    this->menuMap["FoldDemo"] = (BookChapter::MenuFunction) &(A7_Concepts::FoldDemo);
+    this->menuMap["ForwardingDemo"] = (BookChapter::MenuFunction) &(A7_Concepts::ForwardingDemo);
+}
+
+void A7_Concepts::ForwardingDemo()
+{
+    std::cout << "Making an aircraft carrier full of 747s" << std::endl;
+    AircraftCarrier<Boeing747> aircraftCarrier747;
+    aircraftCarrier747.Add(1e5);
+    aircraftCarrier747.Add(1.2e5);
+    std::cout << aircraftCarrier747.Print();
+
+    std::cout << "Making an aircraft carrier full of gliders" << std::endl;
+    AircraftCarrier<Glider> aircraftCarrier;
+    aircraftCarrier.Add(10, "Romeo");
+    aircraftCarrier.Add(10, "Juliet");
+    std::cout << aircraftCarrier.Print();
+
+}
+
+void A7_Concepts::FoldDemo()
+{
+    std::cout << "Sum up a list of numbers in a template" << std::endl;
+    auto v = sumPack(3, 4, 5.5, 2.0f, -4);    
+    std::cout << "The sum of the numbers in the list is " << v << std::endl;
+
+    std::cout << "Generic list constructor" << std::endl;
+    auto newVector = generateVector<double, double>(2.0, 4, 5.5, -2);
+    std::cout << "Generated the vector: " << std::endl;
+    for (auto v : newVector)
+    {
+        std::cout << v << ", ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Printing all arguments to a function" << std::endl;
+    printFold("Hello!"s, ' ',"World ",2021);
+
+}
+
+void A7_Concepts::VariadicTemplateDemo()
+{
+    // Function overload deals with the zero arguments case
+    std::cout << "Function overload to deal with zero case: does not print an endl." << std::endl;
+    auto word = "World!";
+    printVariadic("Hello"s, " ", word, 1);
+    printVariadic("Hello"s, " ", word, 2);
+    printVariadic("Hello"s, " ", word, '\n');
+
+    std::cout << std::endl;
+    std::cout << "Function not overloaded, constexpr if to deal with the zero case inserts a line break" << std::endl;
+    printVariadicRecurse("Hello"s , ' ', word, "! ", 1);
+    printVariadicRecurse("Hello"s , ' ', word, "! ", 2);
+    printVariadicRecurse("Hello"s , ' ', word, "! ", 3);
+}
+
 Engine::Engine(double _torque, double _speed = 100)
 {
     torque = _torque;
@@ -631,6 +736,31 @@ AirVehicle::~AirVehicle()
     }
 }
 
+AirVehicle::AirVehicle(const AirVehicle& m)
+    : AirVehicle(m.drag, {})
+{
+    for (auto e:m.engines)
+    {
+        auto newEngine = new Engine(*e);
+        engines.push_back(newEngine);
+    }
+}
+
+AirVehicle& AirVehicle::operator=(const AirVehicle& m)
+{
+    drag = m.drag;
+    
+    engines.clear();
+    for (const auto e:m.engines)
+    {
+        auto newEngine = new Engine(*e);
+        engines.push_back(newEngine);
+    }
+
+    engines = m.engines;
+    return *this; // Important for the equation syntax that a pointer to the current element is returned
+}
+
 double AirVehicle::Speed() const
 {
     return Power() / drag;
@@ -674,6 +804,59 @@ std::string LockheedF35::Sound() const
     return "Bang";
 }
 
+Glider::Glider(double drag, std::string name)
+    : AirVehicle(drag, {}), _name(name)
+{
+
+}
+Glider::~Glider()
+{
+}
+
+std::string Glider::Sound() const
+{
+    std::ostringstream s;
+    s << "Hi! I'm a glider and my name is " << _name;
+    return s.str();
+}
+
+Glider::Glider(const Glider& m)
+    : AirVehicle(m), _name(m._name)
+{
+}
+
+Glider& Glider::operator=(const Glider& m)
+{
+    AirVehicle::operator=(m);
+    _name = m._name;
+    return *this;
+}
+
+template<typename AirVehicle>
+AircraftCarrier<AirVehicle>::AircraftCarrier() 
+    : _aircraft(MyVector<AirVehicle>())
+{
+    
+}
+
+template<typename AirVehicle>
+template<typename... VehicleArgs>
+void AircraftCarrier<AirVehicle>::Add(VehicleArgs&&... v)
+{
+    _aircraft.append(AirVehicle(std::forward<VehicleArgs>(v)...));
+}
+
+template<typename AirVehicle>
+std::string AircraftCarrier<AirVehicle>::Print()
+{
+    std::ostringstream os;
+    os << "The aircraft carrier: " << '\n';
+    for (int i = 0; i != _aircraft.size(); ++i)
+    {
+        os << _aircraft[i].Sound() << '\n';
+    }
+    return os.str();
+}
 
 template<typename T>
 LessThan<T>::LessThan(const T& v) : comparator{v} {}
