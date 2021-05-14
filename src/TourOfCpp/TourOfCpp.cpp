@@ -724,16 +724,8 @@ std::string F1Car::Sound() const
 AirVehicle::AirVehicle(double dragForce, std::initializer_list<Engine*> _engines)
 {
     drag = dragForce;
-    engines = std::vector<Engine*>{_engines};
-}
-AirVehicle::~AirVehicle()
-{
-    auto i{0};
-    for (auto e:engines)
-    {
-        ++i;
-        delete e;
-    }
+    engines = std::vector<Engine*>{};
+    engines.insert(engines.begin(), _engines);
 }
 
 AirVehicle::AirVehicle(const AirVehicle& m)
@@ -751,7 +743,7 @@ AirVehicle& AirVehicle::operator=(const AirVehicle& m)
     drag = m.drag;
     
     engines.clear();
-    for (const auto e:m.engines)
+    for (auto e:m.engines)
     {
         auto newEngine = new Engine(*e);
         engines.push_back(newEngine);
@@ -808,9 +800,6 @@ Glider::Glider(double drag, std::string name)
     : AirVehicle(drag, {}), _name(name)
 {
 
-}
-Glider::~Glider()
-{
 }
 
 std::string Glider::Sound() const

@@ -189,7 +189,6 @@ class AirVehicle
     public:
         AirVehicle(double, std::initializer_list<Engine*>);
         AirVehicle() {};
-        ~AirVehicle();
 
         AirVehicle(const AirVehicle&); // Copy constructor
         AirVehicle& operator=(const AirVehicle&); // Copy assignment
@@ -227,7 +226,6 @@ class Glider
     public:
         Glider(double, std::string);
         Glider() : AirVehicle() {_name="Default"; };
-        ~Glider();
         Glider(const Glider&); // Copy constructor
         Glider& operator=(const Glider&); // Copy assignment
 

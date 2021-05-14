@@ -113,8 +113,11 @@ template<typename T>
 void MyVector<T>::append(T newValue)
 {
     auto oldSz = sz;
-    T* oldData = new T[oldSz];
-    memcpy(oldData, data.get(), oldSz*sizeof(T));
+    T oldData[oldSz];
+    for (int i = 0; i != oldSz; ++i)
+    {
+        oldData[i] = data.get()[i];
+    }
 
     ++sz;
     data = std::make_unique<T[]>(sz);
