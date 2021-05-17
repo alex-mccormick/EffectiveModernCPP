@@ -86,6 +86,7 @@
         "fstream": "cpp",
         "cinttypes": "cpp",
         "*.ipp": "cpp",
-        "*.tpp": "cpp"
+        "*.tpp": "cpp",
+        "regex": "cpp"
     }
 }

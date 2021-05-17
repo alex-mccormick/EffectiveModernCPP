@@ -28,6 +28,7 @@ int main(int argc, char** argv)
 		cout << "15. Move And Copy" << endl;
 		cout << "16. Templates" << endl;
 		cout << "17. Concepts" << endl;
+		cout << "18. Standard Library" << endl;
 		cout << "0. Exit" << endl;
 
 		int selection;
@@ -78,6 +79,9 @@ int main(int argc, char** argv)
 			break;
 		case 17:
 			chapter = new A7_Concepts{};
+			break;
+		case 18:
+			chapter = new A8_StandardLibrary{};
 			break;
 
         case 0:

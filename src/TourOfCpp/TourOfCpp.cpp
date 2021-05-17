@@ -11,6 +11,7 @@
 #include <string>
 
 using namespace std::string_literals; // enables s-suffix for std::string literals
+using namespace std::literals::string_view_literals; // enables s-suffix for std::string literals
 
 A2_UserDefinedTypes::A2_UserDefinedTypes()
     :BookChapter("User Defined Types")
@@ -660,6 +661,94 @@ void A7_Concepts::VariadicTemplateDemo()
     printVariadicRecurse("Hello"s , ' ', word, "! ", 3);
 }
 
+A8_StandardLibrary::A8_StandardLibrary()
+    :BookChapter("StandardLibrary")
+{
+    this->menuMap["StringDemo"] = (BookChapter::MenuFunction) &(A8_StandardLibrary::StringDemo);
+}
+
+std::string concatStringView(std::string_view a, std::string_view b)
+{
+    std::string res(a.length() + b.length(), '0');
+    char* p = &res[0]; // Get the starting memory address of the combined array
+    for (const char& c : a)
+    {
+        (*p++) = c;
+    }
+    std::copy(b.begin(), b.end(), p);
+    return res;
+}
+void testRegexIterator(std::string input)
+{
+    std::cout << "Searching the string " << input << " for matches" << std::endl;
+    std::regex pat {R"(\s+(\w+))"};
+    for (std::sregex_iterator p(input.begin(), input.end(), pat); p!=std::sregex_iterator{}; ++p)
+        std::cout << (*p)[1] << std::endl;
+}
+
+void A8_StandardLibrary::StringDemo()
+{
+    // Combining elements of a string
+    std::cout << "Hello " << "World!" << std::endl;
+    std::cout << "Hello "s + "World!" << std::endl;
+    std::cout << "Hello "s + "World!"s << std::endl;
+    std::cout << std::endl;
+
+    // Substring and replace
+    std::string phrase = "We don't serve food!";
+    std::string subPhrase = phrase.substr(3, 5);
+    for (auto & c: subPhrase) c = toupper(c); // Convert each char to uppercase
+    phrase.replace(3, 5, subPhrase);
+    std::cout << phrase << std::endl;
+    std::cout << std::endl;
+
+    //c-strings
+    std::string s = "Shoulders of Giants";
+    printf("Printf of string representation: %s\n", s.c_str());
+    std::cout << "cout of string representation: " << s << std::endl;
+    std::cout << "cout of c_str representation: " << s.c_str() << std::endl;
+    std::cout << std::endl;
+
+    // String view
+    std::string s1 = "Hello ";
+    const char* c1 = "Hello ";
+    auto a1 = "Hello "s;
+    std::string_view sv1 = "Hello "sv;
+    std::string s2 = "World!";
+
+    std::cout << concatStringView(s1, "World"s) << std::endl;
+    std::cout << concatStringView(s1, "World"sv) << std::endl;
+    std::cout << concatStringView(c1, "World") << std::endl;
+    std::cout << concatStringView(c1, "World"sv) << std::endl;
+    std::cout << concatStringView(s1, s2) << std::endl;
+    std::cout << concatStringView(sv1, s2) << std::endl;
+    // string views are {pointer, size} pairs
+    std::cout << concatStringView({c1,6}, {&s2[0],5}) << std::endl;
+    std::cout << concatStringView({&sv1.at(0),6}, {&s2[0],6}) << std::endl;
+    std::cout << std::endl;
+
+    // String view is read only, but this still allows:
+    std::cout << "The third character in " << sv1 << " is " << sv1[2] << std::endl;
+    // Out of range protection is provided by at()
+    std::cout << "The third character in " << sv1 << " is " << sv1.at(2) << std::endl;
+    std::cout << std::endl;
+
+    // Regex match
+    std::vector<std::string> postcodes = {"HP6 5PX", "SW1 1AA", "NN13 7BD", "AA1 1AA", "Hello World!", "Oops", "Pro1 4ot"};
+    auto checker = PostcodeMatch();
+    for (const auto s:postcodes)
+    {
+        std::cout << "The string " << s << (checker(s) ? " is " : " is not ") << "a valid postcode" << std::endl;
+    }
+    std::cout << std::endl;
+
+    // Regex iterator
+    std::string input1 = "aa as; asd ++e^asdf asdfg";
+    std::string input2 = " cd ef2; ^^%12 g13 ww; ww";
+    testRegexIterator(input1);
+    testRegexIterator(input2);
+}
+
 Engine::Engine(double _torque, double _speed = 100)
 {
     torque = _torque;
@@ -857,3 +946,6 @@ template<typename T>
 constexpr bool BitChecker::operator()(const T& x) const {return x & (1 << (pos-1));}
 // This works, but is undefined, unportable, and really messy
 // constexpr bool BitChecker::operator()(T x) const {return (*reinterpret_cast<int*>(&x) & (1 << (pos-1)));}
+
+PostcodeMatch::PostcodeMatch() {}
+bool PostcodeMatch::operator()(std::string str) const {return std::regex_match(str, postcode);}

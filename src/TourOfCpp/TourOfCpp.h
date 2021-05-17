@@ -1,5 +1,7 @@
 #include "../include/stdafx.h"
 #include "../Generic/BookChapter.h"
+#include <string_view>
+#include <regex>
 #include "MyVector.h"
 #include "MyVector.tpp"
 
@@ -124,6 +126,16 @@ class A7_Concepts
         static void VariadicTemplateDemo(void);
         static void FoldDemo(void);
         static void ForwardingDemo(void);
+};
+
+class A8_StandardLibrary
+    : public BookChapter
+{
+    public:
+        A8_StandardLibrary();
+
+    private:
+        static void StringDemo(void);
 };
 
 class Engine
@@ -268,4 +280,12 @@ class BitChecker {
         template<typename T>
         constexpr bool operator()(const T&) const;
         // constexpr bool operator()(T) const;
+};
+
+class PostcodeMatch {
+    private:
+        const std::regex postcode{R"(^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$)"};
+    public:
+        PostcodeMatch();
+        bool operator()(std::string) const;
 };
