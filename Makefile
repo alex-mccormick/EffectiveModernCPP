@@ -1,6 +1,6 @@
 IDIR=include
 CC=g++
-CFLAGS=-I$(IDIR) -std=c++17 -g
+CFLAGS=-I$(IDIR) -std=c++17 -g -lstdc++fs
 
 _DEPS= src/Chapters/Chapters.h \
     src/Generic/BookChapter.h \
@@ -12,8 +12,7 @@ _DEPS= src/Chapters/Chapters.h \
 
 _OBJ = obj/main.o obj/BookChapter.o obj/Widget.o \
        obj/C1_DeducingTypes.o obj/Matrix.o \
-	   obj/TourOfCpp.o \
-	#    obj/MyVector.o obj/SimpleCollection.o
+	   obj/TourOfCpp.o
 
 DEPS = $(patsubst %,$(IDIR)%,$(_DEPS))
 OBJ = $(patsubst %,$(ODIR)%,$(_OBJ))
@@ -35,12 +34,6 @@ obj/C1_DeducingTypes.o: src/Chapters/C1_DeducingTypes.cpp
 
 obj/Matrix.o: src/TourOfCpp/Matrix.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
-
-# obj/MyVector.o: src/TourOfCpp/MyVector.tpp
-# 	$(CC) -c -o $@ $< $(CFLAGS)
-
-# obj/SimpleCollection.o: src/TourOfCpp/SimpleCollection.tpp
-# 	$(CC) -c -o $@ $< $(CFLAGS)
 
 obj/TourOfCpp.o: src/TourOfCpp/TourOfCpp.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
