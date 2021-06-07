@@ -32,7 +32,7 @@
 *.app
 
 # Resource directories
-/[Rr]esources?
+/[Rr]esources/*
 
 # Visual Studio
 ## Ignore Visual Studio temporary files, build results, and

@@ -10,6 +10,7 @@
 #include <ctime>
 #include <chrono>
 #include <string>
+#include <filesystem>
 
 using namespace std::string_literals; // enables s-suffix for std::string literals
 using namespace std::literals::string_view_literals; // enables s-suffix for std::string literals
@@ -667,6 +668,7 @@ A8_StandardLibrary::A8_StandardLibrary()
 {
     this->menuMap["StringDemo"] = (BookChapter::MenuFunction) &(A8_StandardLibrary::StringDemo);
     this->menuMap["ConsoleIODemo"] = (BookChapter::MenuFunction) &(A8_StandardLibrary::ConsoleIODemo);
+    this->menuMap["FileIODemo"] = (BookChapter::MenuFunction) &(A8_StandardLibrary::FileIODemo);
 }
 
 std::string concatStringView(std::string_view a, std::string_view b)
@@ -825,6 +827,96 @@ void A8_StandardLibrary::ConsoleIODemo(void)
     }
 }
 
+void WriteToFile(std::vector<AirVehicle> planes)
+{
+    // Get the file name to write to
+    std::cout << "Enter the file name you want to give to the planes" << std::endl;
+    std::string filePathEntry;
+    std::cin >> filePathEntry;
+
+    std::filesystem::path p(filePathEntry);
+
+    std::cout << "Writing data to file at " << filePathEntry << " ..." << std::endl;
+
+    if (std::filesystem::exists(p))
+    {
+        std::cout << "Warning, the file already exists!! We will append data to the file" << std::endl;
+    }
+    else 
+    {
+        std::cout << "File does not exist, creating..." << std::endl;
+    }
+
+    std::ofstream os(p, std::ios::out | std::ios::binary);
+    for (const auto& plane:planes)
+    {
+        os << plane;
+    }
+    os.close();
+}
+
+std::vector<AirVehicle> ReadFromFile()
+{
+    // Get the file name to write to
+    std::cout << "Enter the file name you want to read from" << std::endl;
+    std::string filePathEntry;
+    std::cin >> filePathEntry;
+
+    std::filesystem::path p(filePathEntry);
+
+    std::cout << "Reading data from file at " << filePathEntry << " ..." << std::endl;
+
+    if (std::filesystem::exists(p))
+    {
+        std::cout << "File exists, continuing with read" << std::endl;
+    }
+    else 
+    {
+        std::cout << "File does not exist!" << std::endl;
+        std::error_code ec;
+        throw std::filesystem::filesystem_error("File does not exist", p, ec);
+    }
+    std::ifstream is(p, std::ios::in | std::ios::binary);
+    std::istream_iterator<AirVehicle> start(is), end;
+    std::vector<AirVehicle> planes(start, end);
+
+    return planes;
+}
+
+void A8_StandardLibrary::FileIODemo(void)
+{
+    // We're going to write a few things to a file
+    // This means generating some objects... time for some more planes!!
+
+    std::vector<AirVehicle> planes = {Boeing747(1e4), Boeing747(1e5), LockheedF35(2e5)};
+    for (const auto& p:planes)
+    {
+        std::cout << p << '\n'; 
+    }
+
+    // Helper function to write out the data
+    WriteToFile(planes);
+
+    // Now we want to read in the data again
+    std::vector<AirVehicle> reloadedPlanes;
+    try
+    {
+        reloadedPlanes = ReadFromFile();
+
+        std::cout << "Successfully loaded!! Here they are:" << std::endl;
+        // Print out the array to make sure it looks correct
+        for (const auto& p:reloadedPlanes)
+        {
+            std::cout << p << '\n';
+        }
+    }
+    catch (const std::filesystem::filesystem_error& ex)
+    {
+        std::cout << "Could not read from file, file does not exist" << std::endl;
+        std::cerr << ex.what() << std::endl;
+    }
+}
+
 Engine::Engine(double _torque, double _speed = 100)
 {
     torque = _torque;
@@ -942,6 +1034,19 @@ std::string AirVehicle::Sound() const
     }
     ss << '\0';
     return ss.str();
+}
+
+std::ostream& operator<<(std::ostream& os, const AirVehicle& v)
+{
+    return os << v.Sound();    
+}
+
+std::istream& operator>>(std::istream& is, AirVehicle& v)
+{
+    std::string line;
+    getline(is, line);
+
+    return is;
 }
 
 Boeing747::Boeing747(double dragForce)
