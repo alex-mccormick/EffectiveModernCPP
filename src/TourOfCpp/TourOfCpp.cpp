@@ -5,6 +5,7 @@
 #include <variant>
 #include <vector>
 #include <sstream>
+#include <fstream>
 #include <memory>
 #include <ctime>
 #include <chrono>
@@ -665,6 +666,7 @@ A8_StandardLibrary::A8_StandardLibrary()
     :BookChapter("StandardLibrary")
 {
     this->menuMap["StringDemo"] = (BookChapter::MenuFunction) &(A8_StandardLibrary::StringDemo);
+    this->menuMap["ConsoleIODemo"] = (BookChapter::MenuFunction) &(A8_StandardLibrary::ConsoleIODemo);
 }
 
 std::string concatStringView(std::string_view a, std::string_view b)
@@ -747,6 +749,80 @@ void A8_StandardLibrary::StringDemo()
     std::string input2 = " cd ef2; ^^%12 g13 ww; ww";
     testRegexIterator(input1);
     testRegexIterator(input2);
+}
+
+void removeSpaceAndCapitalise(std::string& s)
+{
+    // Use the algorithm remove_if on the string to remove spaces
+    s.erase(std::remove_if(s.begin(), s.end(), [](unsigned char x) { return std::isspace(x); }), s.end());
+    std::transform(s.begin(), s.end(), s.begin(), toupper);
+}
+
+void A8_StandardLibrary::ConsoleIODemo(void)
+{
+    // Read in a number and echo it back
+    std::cout << "Input your favourite number" << std::endl;
+    
+    int favouriteNumber;
+    std::cin >> favouriteNumber;
+    std::cout << "Your favourite number is " << favouriteNumber << std::endl << std::endl;
+
+    std::cout << "Input your two favourite numbers" << std::endl;
+    int fav1, fav2;
+    std::cin >> fav1 >> fav2;
+    std::cout << "Your favourite numbers are " << fav1 << " and " << fav2 << std::endl << std::endl;
+
+    std::cout << "Enter a full string with a space in the middle\n" << "Try \"a b\"" << std::endl;
+    std::string str1, str2;
+    std::cin >> str1;
+    std::cout << "According to the read operator (>>), you entered: " << str1 << std::endl;
+    std::cout << "Try again using getline, for example enter \"a b\"" << std::endl;
+    std::getline(std::cin, str2);
+    std::cout << "According to getline, you entered: " << str2 << std::endl;
+
+    // This neat little block ensures that the file is closed after reading and all resources freed
+    {
+        std::ofstream os{"resources/temp.txt"};
+        if (os)
+        {
+            std::cout << "I took the liberty of saving your responses so far out to a file:\n";
+            os << favouriteNumber << std::endl;
+            os << fav1 << " " << fav2 << std::endl;
+            os << str1 << std::endl;
+            os << str2 << std::endl;
+        }
+        else
+        {
+            std::cout << "You failed to open the file, sorry\n" << std::endl;
+        }
+    }
+
+    // Now read them back in
+    {
+        std::ifstream is{"temp.txt"};
+        std::vector<std::string> strings;
+        for (std::string s1; getline(is, s1);)
+        {
+            strings.push_back(s1);
+        }
+
+        std::cout << "Here they are:" << std::endl;
+        for (const auto& s2:strings)
+        {
+            std::cout << s2 << std::endl;
+        }
+
+        // Just for fun, lets run a little algorithm to remove the spaces and capitalise any characters
+        std::for_each(strings.begin(), strings.end(), removeSpaceAndCapitalise);
+
+        std::cout << std::endl;
+        std::cout << "Here they are, but neatened up a bit:" << std::endl;
+        for (const auto& s2:strings)
+        {
+            std::cout << s2 << std::endl;
+        }
+
+    }
 }
 
 Engine::Engine(double _torque, double _speed = 100)

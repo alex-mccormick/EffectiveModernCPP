@@ -136,6 +136,7 @@ class A8_StandardLibrary
 
     private:
         static void StringDemo(void);
+        static void ConsoleIODemo(void);
 };
 
 class Engine
