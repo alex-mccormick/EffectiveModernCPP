@@ -136,6 +136,8 @@ class A8_StandardLibrary
 
     private:
         static void StringDemo(void);
+        static void ConsoleIODemo(void);
+        static void FileIODemo(void);
 };
 
 class Engine
@@ -209,6 +211,9 @@ class AirVehicle
         double Speed() const override;
         double Power() const;
 
+        friend std::ostream& operator<< (std::ostream&, const AirVehicle&);
+        friend std::istream& operator>> (std::istream& is, AirVehicle&);
+        
     private:
         double drag;
         std::vector<Engine*> engines;

@@ -5,10 +5,12 @@
 #include <variant>
 #include <vector>
 #include <sstream>
+#include <fstream>
 #include <memory>
 #include <ctime>
 #include <chrono>
 #include <string>
+#include <filesystem>
 
 using namespace std::string_literals; // enables s-suffix for std::string literals
 using namespace std::literals::string_view_literals; // enables s-suffix for std::string literals
@@ -665,6 +667,8 @@ A8_StandardLibrary::A8_StandardLibrary()
     :BookChapter("StandardLibrary")
 {
     this->menuMap["StringDemo"] = (BookChapter::MenuFunction) &(A8_StandardLibrary::StringDemo);
+    this->menuMap["ConsoleIODemo"] = (BookChapter::MenuFunction) &(A8_StandardLibrary::ConsoleIODemo);
+    this->menuMap["FileIODemo"] = (BookChapter::MenuFunction) &(A8_StandardLibrary::FileIODemo);
 }
 
 std::string concatStringView(std::string_view a, std::string_view b)
@@ -747,6 +751,170 @@ void A8_StandardLibrary::StringDemo()
     std::string input2 = " cd ef2; ^^%12 g13 ww; ww";
     testRegexIterator(input1);
     testRegexIterator(input2);
+}
+
+void removeSpaceAndCapitalise(std::string& s)
+{
+    // Use the algorithm remove_if on the string to remove spaces
+    s.erase(std::remove_if(s.begin(), s.end(), [](unsigned char x) { return std::isspace(x); }), s.end());
+    std::transform(s.begin(), s.end(), s.begin(), toupper);
+}
+
+void A8_StandardLibrary::ConsoleIODemo(void)
+{
+    // Read in a number and echo it back
+    std::cout << "Input your favourite number" << std::endl;
+    
+    int favouriteNumber;
+    std::cin >> favouriteNumber;
+    std::cout << "Your favourite number is " << favouriteNumber << std::endl << std::endl;
+
+    std::cout << "Input your two favourite numbers" << std::endl;
+    int fav1, fav2;
+    std::cin >> fav1 >> fav2;
+    std::cout << "Your favourite numbers are " << fav1 << " and " << fav2 << std::endl << std::endl;
+
+    std::cout << "Enter a full string with a space in the middle\n" << "Try \"a b\"" << std::endl;
+    std::string str1, str2;
+    std::cin >> str1;
+    std::cout << "According to the read operator (>>), you entered: " << str1 << std::endl;
+    std::cout << "Try again using getline, for example enter \"a b\"" << std::endl;
+    std::getline(std::cin, str2);
+    std::cout << "According to getline, you entered: " << str2 << std::endl;
+
+    // This neat little block ensures that the file is closed after reading and all resources freed
+    {
+        std::ofstream os{"resources/temp.txt"};
+        if (os)
+        {
+            std::cout << "I took the liberty of saving your responses so far out to a file:\n";
+            os << favouriteNumber << std::endl;
+            os << fav1 << " " << fav2 << std::endl;
+            os << str1 << std::endl;
+            os << str2 << std::endl;
+        }
+        else
+        {
+            std::cout << "You failed to open the file, sorry\n" << std::endl;
+        }
+    }
+
+    // Now read them back in
+    {
+        std::ifstream is{"temp.txt"};
+        std::vector<std::string> strings;
+        for (std::string s1; getline(is, s1);)
+        {
+            strings.push_back(s1);
+        }
+
+        std::cout << "Here they are:" << std::endl;
+        for (const auto& s2:strings)
+        {
+            std::cout << s2 << std::endl;
+        }
+
+        // Just for fun, lets run a little algorithm to remove the spaces and capitalise any characters
+        std::for_each(strings.begin(), strings.end(), removeSpaceAndCapitalise);
+
+        std::cout << std::endl;
+        std::cout << "Here they are, but neatened up a bit:" << std::endl;
+        for (const auto& s2:strings)
+        {
+            std::cout << s2 << std::endl;
+        }
+
+    }
+}
+
+void WriteToFile(std::vector<AirVehicle> planes)
+{
+    // Get the file name to write to
+    std::cout << "Enter the file name you want to give to the planes" << std::endl;
+    std::string filePathEntry;
+    std::cin >> filePathEntry;
+
+    std::filesystem::path p(filePathEntry);
+
+    std::cout << "Writing data to file at " << filePathEntry << " ..." << std::endl;
+
+    if (std::filesystem::exists(p))
+    {
+        std::cout << "Warning, the file already exists!! We will append data to the file" << std::endl;
+    }
+    else 
+    {
+        std::cout << "File does not exist, creating..." << std::endl;
+    }
+
+    std::ofstream os(p, std::ios::out | std::ios::binary);
+    for (const auto& plane:planes)
+    {
+        os << plane;
+    }
+    os.close();
+}
+
+std::vector<AirVehicle> ReadFromFile()
+{
+    // Get the file name to write to
+    std::cout << "Enter the file name you want to read from" << std::endl;
+    std::string filePathEntry;
+    std::cin >> filePathEntry;
+
+    std::filesystem::path p(filePathEntry);
+
+    std::cout << "Reading data from file at " << filePathEntry << " ..." << std::endl;
+
+    if (std::filesystem::exists(p))
+    {
+        std::cout << "File exists, continuing with read" << std::endl;
+    }
+    else 
+    {
+        std::cout << "File does not exist!" << std::endl;
+        std::error_code ec;
+        throw std::filesystem::filesystem_error("File does not exist", p, ec);
+    }
+    std::ifstream is(p, std::ios::in | std::ios::binary);
+    std::istream_iterator<AirVehicle> start(is), end;
+    std::vector<AirVehicle> planes(start, end);
+
+    return planes;
+}
+
+void A8_StandardLibrary::FileIODemo(void)
+{
+    // We're going to write a few things to a file
+    // This means generating some objects... time for some more planes!!
+
+    std::vector<AirVehicle> planes = {Boeing747(1e4), Boeing747(1e5), LockheedF35(2e5)};
+    for (const auto& p:planes)
+    {
+        std::cout << p << '\n'; 
+    }
+
+    // Helper function to write out the data
+    WriteToFile(planes);
+
+    // Now we want to read in the data again
+    std::vector<AirVehicle> reloadedPlanes;
+    try
+    {
+        reloadedPlanes = ReadFromFile();
+
+        std::cout << "Successfully loaded!! Here they are:" << std::endl;
+        // Print out the array to make sure it looks correct
+        for (const auto& p:reloadedPlanes)
+        {
+            std::cout << p << '\n';
+        }
+    }
+    catch (const std::filesystem::filesystem_error& ex)
+    {
+        std::cout << "Could not read from file, file does not exist" << std::endl;
+        std::cerr << ex.what() << std::endl;
+    }
 }
 
 Engine::Engine(double _torque, double _speed = 100)
@@ -866,6 +1034,19 @@ std::string AirVehicle::Sound() const
     }
     ss << '\0';
     return ss.str();
+}
+
+std::ostream& operator<<(std::ostream& os, const AirVehicle& v)
+{
+    return os << v.Sound();    
+}
+
+std::istream& operator>>(std::istream& is, AirVehicle& v)
+{
+    std::string line;
+    getline(is, line);
+
+    return is;
 }
 
 Boeing747::Boeing747(double dragForce)
