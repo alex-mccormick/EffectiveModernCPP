@@ -24,7 +24,7 @@ void BookChapter::RunChapter()
     {
         optionIndex = 0;
         std::cout << "Menu: " << this->chapterName << std::endl;
-        for (auto const& menuOption : this->menuMap)
+        for (const auto& menuOption : this->menuMap)
         {
             std::cout << ++optionIndex << ". " << menuOption.first << std::endl;
         }
@@ -37,7 +37,7 @@ void BookChapter::RunChapter()
         {
             exit = true;
         }
-        else
+        else if (selection <= this->menuMap.size())
         {
             functionMapping[selection]();
         }
