@@ -11,14 +11,24 @@ class C1_DeducingTypes
         static void TypeDeduction(void);
         static void TemplateTypeDeduction(void);
         static void AutoTypeDeduction(void);
-        static void AutoInLambda(void);
+        static void ViewTypes(void);
 
     private:
         template<typename T>
         static void DeduceTypeFromFunction(const T&);
+        template<typename T>
+        static void DeduceTypeFromBoost(const T&);
+        template<typename T>
+        static void DeduceTypeFromStd(const T&);
 
         template<typename T>
         static void DeduceTypeFromRValueReference(T&&);
+
+        template<typename T>
+        static void DeduceTypeFromPassByValue(T);
+
+        template<typename T, std::size_t N>
+        static constexpr std::size_t ArraySize(T (&)[N]) noexcept;
 };
 // class C2_Auto : public BookChapter
 // {

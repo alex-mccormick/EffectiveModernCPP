@@ -1,6 +1,7 @@
 IDIR=include
+BOOST="D:/Program Files/boost_1_75_0/boost_1_75_0"
 CC=g++
-CFLAGS=-I$(IDIR) -std=c++17 -g -lstdc++fs
+CFLAGS=-I$(IDIR) -I$(BOOST) -std=c++17 -g -lstdc++fs
 
 _DEPS= src/Chapters/Chapters.h \
     src/Generic/BookChapter.h \
