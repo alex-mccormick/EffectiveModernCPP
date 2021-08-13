@@ -9,10 +9,16 @@ class C1_DeducingTypes
         C1_DeducingTypes();
         ~C1_DeducingTypes();
         static void TypeDeduction(void);
+        static void TemplateTypeDeduction(void);
+        static void AutoTypeDeduction(void);
+        static void AutoInLambda(void);
 
     private:
         template<typename T>
         static void DeduceTypeFromFunction(const T&);
+
+        template<typename T>
+        static void DeduceTypeFromRValueReference(T&&);
 };
 // class C2_Auto : public BookChapter
 // {
