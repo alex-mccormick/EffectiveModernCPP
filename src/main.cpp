@@ -6,7 +6,8 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-	bool exit{ false };
+	bool exit = false;
+	bool runChapter = true;
 
 	cout << "Effective Modern C++" << endl << "====" << endl << endl;
 
@@ -34,54 +35,54 @@ int main(int argc, char** argv)
 		int selection;
 		cin >> selection;
 
-        BookChapter * chapter;
+        std::unique_ptr<BookChapter> chapter;
 
 		switch (selection)
 		{
 		case 1:
-			chapter = new C1_DeducingTypes{};
+			chapter = std::make_unique<C1_DeducingTypes>();
 			break;
 		// case 2:
-		// 	chapter = new Chapter2{};
+		// 	chapter = std::make_unique<Chapter2>();
 		// 	break;
 		// case 3:
-		// 	chapter = new Chapter3{};
+		// 	chapter = std::make_unique<Chapter3>();
 		// 	break;
 		// case 4:
-		// 	chapter = new Chapter4{};
+		// 	chapter = std::make_unique<Chapter4>();
 		// 	break;
 		// case 5:
-		// 	chapter = new Chapter5{};
+		// 	chapter = std::make_unique<Chapter5>();
 		// 	break;
 		// case 6:
-		// 	chapter = new Chapter6{};
+		// 	chapter = std::make_unique<Chapter6>();
 		// 	break;
 		// case 7:
-		// 	chapter = new Chapter7{};
+		// 	chapter = std::make_unique<Chapter7>();
 		// 	break;
 		// case 8:
-		// 	chapter = new Chapter8{};
+		// 	chapter = std::make_unique<Chapter8>();
 		// 	break;
 		case 12:
-			chapter = new A2_UserDefinedTypes{};
+			chapter = std::make_unique<A2_UserDefinedTypes>();
 			break;
 		case 13:
-			chapter = new A3_Modularity{};
+			chapter = std::make_unique<A3_Modularity>();
 			break;
 		case 14:
-			chapter = new A4_Classes{};
+			chapter = std::make_unique<A4_Classes>();
 			break;
 		case 15:
-			chapter = new A5_MoveAndCopy{};
+			chapter = std::make_unique<A5_MoveAndCopy>();
 			break;
 		case 16:
-			chapter = new A6_Templates{};
+			chapter = std::make_unique<A6_Templates>();
 			break;
 		case 17:
-			chapter = new A7_Concepts{};
+			chapter = std::make_unique<A7_Concepts>();
 			break;
 		case 18:
-			chapter = new A8_StandardLibrary{};
+			chapter = std::make_unique<A8_StandardLibrary>();
 			break;
 
         case 0:
@@ -89,10 +90,10 @@ int main(int argc, char** argv)
             break;
 		default:
 			cout << "Invalid Selection" << endl;
-
+			runChapter = false;
 		}
 
-        if (!exit)
+        if (!exit && runChapter)
         {
 			cout << endl;
             chapter->RunChapter();
