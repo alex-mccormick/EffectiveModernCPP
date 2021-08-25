@@ -12,7 +12,7 @@ _DEPS= src/Chapters/Chapters.h \
 	src/TourOfCpp/TourOfCpp.h
 
 _OBJ = obj/main.o obj/BookChapter.o obj/Widget.o \
-       obj/C1_DeducingTypes.o obj/Matrix.o \
+       obj/C1_DeducingTypes.o obj/C2_Auto.o obj/Matrix.o \
 	   obj/TourOfCpp.o
 
 DEPS = $(patsubst %,$(IDIR)%,$(_DEPS))
@@ -31,6 +31,9 @@ obj/Widget.o: src/Generic/Widget.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 obj/C1_DeducingTypes.o: src/Chapters/C1_DeducingTypes.cpp
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+obj/C2_Auto.o: src/Chapters/C2_Auto.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 obj/Matrix.o: src/TourOfCpp/Matrix.cpp
