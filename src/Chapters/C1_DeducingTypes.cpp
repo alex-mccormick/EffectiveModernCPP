@@ -16,12 +16,6 @@ C1_DeducingTypes::C1_DeducingTypes()
     this->menuMap["ViewTypes"] = (BookChapter::MenuFunction) &(C1_DeducingTypes::ViewTypes);
 }
 
-
-C1_DeducingTypes::~C1_DeducingTypes()
-{
-    
-}
-
 template <class T>
 std::string type_name()
 {

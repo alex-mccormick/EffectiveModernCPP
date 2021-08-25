@@ -7,7 +7,6 @@ class C1_DeducingTypes
 {
     public:
         C1_DeducingTypes();
-        ~C1_DeducingTypes();
         static void TypeDeduction(void);
         static void TemplateTypeDeduction(void);
         static void AutoTypeDeduction(void);
@@ -30,11 +29,14 @@ class C1_DeducingTypes
         template<typename T, std::size_t N>
         static constexpr std::size_t ArraySize(T (&)[N]) noexcept;
 };
-// class C2_Auto : public BookChapter
-// {
-//     C2_Auto();
-//     ~C2_Auto();
-// }
+class C2_Auto : public BookChapter
+{
+    public:
+        C2_Auto();
+
+        static void BoolArray(void);
+        static void ExplicitInitialiser(void);
+};
 // class C3_ModernCpp : public BookChapter
 // {
 //     C3_ModernCpp();

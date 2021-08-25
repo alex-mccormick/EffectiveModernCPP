@@ -59,7 +59,6 @@ class A2_UserDefinedTypes
 {
     public:
         A2_UserDefinedTypes();
-        ~A2_UserDefinedTypes();
 
     private:
         static void StructureDemo(void);
@@ -73,7 +72,6 @@ class A3_Modularity
 {
     public:
         A3_Modularity();
-        ~A3_Modularity();
 
     private:
         static void MatrixDemo(void);
@@ -84,7 +82,6 @@ class A4_Classes
 {
     public:
         A4_Classes();
-        ~A4_Classes();
 
     private:
         static void AbstractClassDemo(void);
@@ -96,7 +93,6 @@ class A5_MoveAndCopy
 {
     public:
         A5_MoveAndCopy();
-        ~A5_MoveAndCopy();
 
     private:
         static void SumMatrixDemo(void);
