@@ -1,6 +1,8 @@
 #include "../include/stdafx.h"
 #include "../Generic/BookChapter.h"
 #include <string_view>
+#include <mutex>
+#include <memory>
 
 class C1_DeducingTypes
     : public BookChapter
@@ -36,6 +38,7 @@ class C2_Auto : public BookChapter
 
         static void BoolArray(void);
         static void ExplicitInitialiser(void);
+        static void MutexDemo(void);
 };
 // class C3_ModernCpp : public BookChapter
 // {

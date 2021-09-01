@@ -12,7 +12,7 @@ _DEPS= src/Chapters/Chapters.h \
 	src/TourOfCpp/TourOfCpp.h
 
 _OBJ = obj/main.o obj/BookChapter.o obj/Widget.o \
-       obj/C1_DeducingTypes.o obj/Matrix.o \
+       obj/Chapter1.o obj/Chapter2.o obj/Matrix.o \
 	   obj/TourOfCpp.o
 
 DEPS = $(patsubst %,$(IDIR)%,$(_DEPS))
