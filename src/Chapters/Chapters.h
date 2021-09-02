@@ -40,11 +40,16 @@ class C2_Auto : public BookChapter
         static void ExplicitInitialiser(void);
         static void MutexDemo(void);
 };
-// class C3_ModernCpp : public BookChapter
-// {
-//     C3_ModernCpp();
-//     ~C3_ModernCpp();
-// }
+class C3_ModernCpp : public BookChapter
+{
+    public:
+        C3_ModernCpp();
+
+        static void TuplesAndEnums(void);
+        static void Overriding(void);
+        static void MemberFunctionQualifiers(void);
+        static void ConstexprDemo(void);
+};
 // class C4_SmartPointers : public BookChapter
 // {
 //     C4_SmartPointers();

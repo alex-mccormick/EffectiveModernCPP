@@ -46,9 +46,9 @@ int main(int argc, char** argv)
 		case 2:
 			chapter = new C2_Auto();
 			break;
-		// case 3:
-		// 	chapter = new Chapter3();
-		// 	break;
+		case 3:
+			chapter = new C3_ModernCpp();
+			break;
 		// case 4:
 		// 	chapter = new Chapter4();
 		// 	break;
