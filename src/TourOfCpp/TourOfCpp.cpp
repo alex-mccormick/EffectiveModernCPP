@@ -189,11 +189,6 @@ A4_Classes::A4_Classes()
     this->menuMap["UniquePtrDemo"] = (BookChapter::MenuFunction) &(A4_Classes::UniquePtrDemo);
 }
 
-A4_Classes::~A4_Classes()
-{
-
-}
-
 void A4_Classes::AbstractClassDemo()
 {
     auto boeing = new Boeing747(1e5);
@@ -295,11 +290,6 @@ A5_MoveAndCopy::A5_MoveAndCopy()
     :BookChapter("Classes")
 {
     this->menuMap["SumMatrixDemo"] = (BookChapter::MenuFunction) &(A5_MoveAndCopy::SumMatrixDemo);
-}
-
-A5_MoveAndCopy::~A5_MoveAndCopy()
-{
-
 }
 
 void A5_MoveAndCopy::SumMatrixDemo()
