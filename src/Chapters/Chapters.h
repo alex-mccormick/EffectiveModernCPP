@@ -49,6 +49,7 @@ class C3_ModernCpp : public BookChapter
         static void Overriding(void);
         static void MemberFunctionQualifiers(void);
         static void ConstexprDemo(void);
+        static void RuleOfThree(void);
 };
 // class C4_SmartPointers : public BookChapter
 // {

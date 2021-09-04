@@ -9,7 +9,12 @@ class Widget {
     public:
         constexpr Widget() : Widget(0, 0) { };
         constexpr Widget(double x, double y) : _x{x}, _y{y} { };
-        Widget(const Widget& w);
+        
+        Widget(Widget&& w); // The move constructor is defined
+        // Since the move constructor is defined, the copy constructor will be deleted
+        Widget(const Widget& w) = default; // Explicitly define the default copy constructor
+
+        // Destructor will be default, allows constexpr Widget
 
         constexpr int GetQuadrant() const {
             return 1 + ((_y < 0) << 1) + ((_x < 0)^(_y < 0));
@@ -39,8 +44,6 @@ namespace Overriding {
         protected:
             std::unique_ptr<Widget> _start;
             std::unique_ptr<Widget> _end;
-
-            // TODO: make initialisers constexpr and enable compile time eval
     };
 
     class Circle : public Shape {

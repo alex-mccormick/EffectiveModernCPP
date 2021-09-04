@@ -1,4 +1,5 @@
 #include "Chapters.h"
+#include "../Generic/Widget.h"
 #include <set>
 
 C3_ModernCpp::C3_ModernCpp()
@@ -8,6 +9,7 @@ C3_ModernCpp::C3_ModernCpp()
     this->menuMap["Overriding"] = (BookChapter::MenuFunction) &(C3_ModernCpp::Overriding);
     this->menuMap["MemberFunctionQualifiers"] = (BookChapter::MenuFunction) &(C3_ModernCpp::MemberFunctionQualifiers);
     this->menuMap["Constexpr"] = (BookChapter::MenuFunction) &(C3_ModernCpp::ConstexprDemo);
+    this->menuMap["SpecialMemberFunctions"] = (BookChapter::MenuFunction) &(C3_ModernCpp::RuleOfThree);
 }
 
 using UserInfo = std::tuple<std::string, std::string, int>;
@@ -87,4 +89,20 @@ void C3_ModernCpp::ConstexprDemo() {
 
     std::cout << "Created an array at compile-time which is " << test.GetQuadrant() << " elements long" << std::endl;
     delete[] quadrants;
+}
+
+void C3_ModernCpp::RuleOfThree() {
+
+    // Widget does not have a copy or a move assignment operator
+    Widget w1(4, 5);
+
+    Widget w2{3, 2}; // Braces are ok too
+
+    std::cout << "Attempting to use copy assignment on w2" << std::endl;
+    // w2 = w1; // Compiler error; copy assignment not defined
+    std::cout << "Attempting to use move assignment on w2" << std::endl;
+    // w2 = std::move(w1); // Compiler error; move assignment not defined
+
+    std::cout << "Attempting to use move constructor on w3" << std::endl;
+    Widget w3(std::move(w1)); // Move constructor IS defined!!
 }

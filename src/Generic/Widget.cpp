@@ -1,6 +1,6 @@
 #include "Widget.h"
 
-Widget::Widget(const Widget& w) : _x{w._x}, _y{w._y} { }
+Widget::Widget(Widget&& w) : _x{w._x}, _y{w._y} { std::cout << "Move constructing a widget\n"; };
 
 std::ostream& operator<<(std::ostream& os, const Widget& widget)
 {
