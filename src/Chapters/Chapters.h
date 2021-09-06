@@ -50,11 +50,12 @@ class C3_ModernCpp : public BookChapter
         static void MemberFunctionQualifiers(void);
         static void ConstexprDemo(void);
 };
-// class C4_SmartPointers : public BookChapter
-// {
-//     C4_SmartPointers();
-//     ~C4_SmartPointers();
-// }
+class C4_SmartPointers : public BookChapter
+{
+    C4_SmartPointers();
+
+    static void ResourceOwnership(void);
+}
 // class C5_Moves : public BookChapter
 // {
 //     C5_Moves();
