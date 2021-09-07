@@ -5,7 +5,7 @@
             "includePath": [
                 "${default}",
                 "${workspaceFolder}/**",
-                "D:/Program Files/boost_1_75_0/boost_1_75_0"
+                "D:/Program Files/boost_1_75_0"
             ],
             "defines": [
                 "_DEBUG",

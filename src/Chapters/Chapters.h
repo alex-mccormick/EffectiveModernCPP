@@ -53,10 +53,11 @@ class C3_ModernCpp : public BookChapter
 };
 class C4_SmartPointers : public BookChapter
 {
-    C4_SmartPointers();
+    public:
+        C4_SmartPointers();
 
-    static void ResourceOwnership(void);
-}
+        static void ResourceOwnership(void);
+};
 // class C5_Moves : public BookChapter
 // {
 //     C5_Moves();

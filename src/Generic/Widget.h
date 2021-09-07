@@ -37,6 +37,7 @@ namespace Overriding {
     class Shape {
         public:
             Shape();
+            virtual ~Shape() {};
 
             virtual void Draw() const;
             virtual double GetSpacing() &;
@@ -49,6 +50,7 @@ namespace Overriding {
     class Circle : public Shape {
         public:
             Circle();
+            virtual ~Circle() override {};
 
             virtual void Draw() const override;
 
@@ -60,6 +62,7 @@ namespace Overriding {
         public:
             Face();
             Face(Widget*, Widget*);
+            virtual ~Face() override {};
 
             virtual void Draw() const final;
 
@@ -73,4 +76,70 @@ namespace Overriding {
             std::vector<Widget> _eyes;
     };
 
-}
+
+};
+
+enum class ShapeType {Shape, Circle, Face};
+
+template<typename... Ts>
+auto shape_factory(const ShapeType type, Ts&&... params)
+{
+    std::unique_ptr<Overriding::Shape> ptr{nullptr};
+
+    if (type == ShapeType::Circle)
+    {
+        ptr.reset(new Overriding::Circle(std::forward<Ts>(params)));
+    }
+    else if (type == ShapeType::Face)
+    {
+        ptr.reset(new Overriding::Face(std::forward<Ts>(params)));
+    }
+    else
+    {
+        ptr.reset(new Overriding::Shape(std::forward<Ts>(params)));
+    }
+
+    return ptr;
+};
+
+std::string shape_name(const ShapeType type) {
+    switch (type) {
+        case ShapeType::Shape:
+            return "Shape";
+        case ShapeType::Circle:
+            return "Circle";
+        case ShapeType::Face:
+            return "Face";
+        default: 
+            return "";
+    }
+};
+
+template<typename... Ts>
+auto shape_factory_with_deleter(const ShapeType type, Ts&&... params)
+{
+    auto shapeString = shape_name(type);
+
+    auto delShape = [=] (Overriding::Shape* shape) {
+        if (shape)
+            std::cout << "Deleting " << shapeString << "\n";
+        delete shape;
+    };
+
+    std::unique_ptr<Overriding::Shape,decltype(delShape)> ptr{nullptr, delShape};
+    
+    if (type == ShapeType::Circle)
+    {
+            ptr.reset(new Overriding::Circle(std::forward<Ts>(params)));
+    }
+    else if (type == ShapeType::Face)
+    {
+        ptr.reset(new Overriding::Face(std::forward<Ts>(params)));
+    }
+    else
+    {
+        ptr.reset(new Overriding::Shape(std::forward<Ts>(params)));
+    }
+
+    return ptr;
+};

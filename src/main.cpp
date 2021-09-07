@@ -49,9 +49,9 @@ int main(int argc, char** argv)
 		case 3:
 			chapter = new C3_ModernCpp();
 			break;
-		// case 4:
-		// 	chapter = new Chapter4();
-		// 	break;
+		case 4:
+			chapter = new C4_SmartPointers();
+			break;
 		// case 5:
 		// 	chapter = new Chapter5();
 		// 	break;
