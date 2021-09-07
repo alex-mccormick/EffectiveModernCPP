@@ -1,5 +1,4 @@
 #include "Chapters.h"
-#include "..\Generic\Widget.h"
 #include <limits>
 
 C2_Auto::C2_Auto()

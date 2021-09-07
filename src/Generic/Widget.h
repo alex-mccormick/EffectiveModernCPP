@@ -81,28 +81,7 @@ namespace Overriding {
 
 enum class ShapeType {Shape, Circle, Face};
 
-template<typename... Ts>
-auto shape_factory(const ShapeType type, Ts&&... params)
-{
-    std::unique_ptr<Overriding::Shape> ptr{nullptr};
-
-    if (type == ShapeType::Circle)
-    {
-        ptr.reset(new Overriding::Circle(std::forward<Ts>(params)));
-    }
-    else if (type == ShapeType::Face)
-    {
-        ptr.reset(new Overriding::Face(std::forward<Ts>(params)));
-    }
-    else
-    {
-        ptr.reset(new Overriding::Shape(std::forward<Ts>(params)));
-    }
-
-    return ptr;
-};
-
-std::string shape_name(const ShapeType type) {
+inline std::string shape_name(const ShapeType type) {
     switch (type) {
         case ShapeType::Shape:
             return "Shape";
@@ -113,6 +92,27 @@ std::string shape_name(const ShapeType type) {
         default: 
             return "";
     }
+};
+
+template<typename... Ts>
+auto shape_factory(const ShapeType type, Ts&&... params)
+{
+    std::unique_ptr<Overriding::Shape> ptr{nullptr};
+
+    if (type == ShapeType::Circle)
+    {
+        ptr.reset(new Overriding::Circle(std::forward<Ts>(params)...));
+    }
+    else if (type == ShapeType::Face)
+    {
+        ptr.reset(new Overriding::Face(std::forward<Ts>(params)...));
+    }
+    else
+    {
+        ptr.reset(new Overriding::Shape(std::forward<Ts>(params)...));
+    }
+
+    return ptr;
 };
 
 template<typename... Ts>
@@ -128,17 +128,9 @@ auto shape_factory_with_deleter(const ShapeType type, Ts&&... params)
 
     std::unique_ptr<Overriding::Shape,decltype(delShape)> ptr{nullptr, delShape};
     
-    if (type == ShapeType::Circle)
+    if (type == ShapeType::Face)
     {
-            ptr.reset(new Overriding::Circle(std::forward<Ts>(params)));
-    }
-    else if (type == ShapeType::Face)
-    {
-        ptr.reset(new Overriding::Face(std::forward<Ts>(params)));
-    }
-    else
-    {
-        ptr.reset(new Overriding::Shape(std::forward<Ts>(params)));
+        ptr.reset(new Overriding::Face(std::forward<Ts>(params)...));
     }
 
     return ptr;

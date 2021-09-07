@@ -1,5 +1,4 @@
 #include "Chapters.h"
-#include "../Generic/Widget.h"
 #include <set>
 
 C3_ModernCpp::C3_ModernCpp()
