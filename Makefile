@@ -1,4 +1,5 @@
 IDIR=include
+ODIR=obj/
 BOOST="D:/Program Files/boost_1_75_0"
 CC=g++
 CFLAGS=-I$(IDIR) -I$(BOOST) -std=c++17 -g -lstdc++fs
@@ -11,11 +12,15 @@ _DEPS= src/Chapters/Chapters.h \
 	src/TourOfCpp/SimpleCollection.h \
 	src/TourOfCpp/TourOfCpp.h
 
-_OBJ = obj/main.o obj/BookChapter.o obj/Widget.o \
-       obj/C1_DeducingTypes.o obj/C2_Auto.o  obj/C3_ModernCpp.o obj/Matrix.o \
-	   obj/TourOfCpp.o
-
 DEPS = $(patsubst %,$(IDIR)%,$(_DEPS))
+
+_CHAPTERS = $(wildcard src/Chapters/*.cpp)
+CHAPTERS = $(patsubst src/Chapters/%.cpp, %.o, $(_CHAPTERS))
+
+_OBJ = main.o BookChapter.o Widget.o \
+       $(CHAPTERS) Matrix.o \
+	   TourOfCpp.o
+	   
 OBJ = $(patsubst %,$(ODIR)%,$(_OBJ))
 
 EffectiveModernCpp: $(OBJ)
@@ -30,25 +35,17 @@ obj/BookChapter.o: src/Generic/BookChapter.cpp
 obj/Widget.o: src/Generic/Widget.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-obj/C1_DeducingTypes.o: src/Chapters/C1_DeducingTypes.cpp
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-obj/C2_Auto.o: src/Chapters/C2_Auto.cpp
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-obj/C3_ModernCpp.o: src/Chapters/C3_ModernCpp.cpp
-	$(CC) -c -o $@ $< $(CFLAGS)
-
 obj/Matrix.o: src/TourOfCpp/Matrix.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 obj/TourOfCpp.o: src/TourOfCpp/TourOfCpp.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(ODIR)/%.o: %.cpp $(DEPS)
+obj/%.o: src/Chapters/%.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 .PHONY: clean
 
+OBJECT_FILES := $(wildcard $(ODIR)*.o)
 clean:
-	rm -f $(ODIR)/*.o
+	rm -f $(OBJECT_FILES)
