@@ -4,6 +4,7 @@
 #include <memory>
 #include <iostream>
 #include <vector>
+#include <atomic>
 
 class Widget {
     public:
@@ -26,9 +27,23 @@ class Widget {
         constexpr double get_x() const {return _x;};
         constexpr double get_y() const {return _y;};
         
-    private:
+    protected:
         double _x{0};
         double _y{0};
+
+};
+
+class ExWidget : public Widget, std::enable_shared_from_this<ExWidget> {
+
+    public:
+        ExWidget() : ExWidget(0, 0) { };
+        ExWidget(double x, double y) : Widget(x, y) { };
+
+        double& get_x() {return _x;};
+        double& get_y() {return _y;};
+
+        void ProcessWidget(double scalar, std::vector<std::shared_ptr<ExWidget>>& processedWidgets);
+        void ProcessWidgetWithThis(double scalar, std::vector<std::shared_ptr<ExWidget>>& processedWidgets);
 
 };
 
@@ -37,10 +52,12 @@ namespace Overriding {
     class Shape {
         public:
             Shape();
-            virtual ~Shape() {};
+            virtual ~Shape() { ShapesLeft--; };
 
             virtual void Draw() const;
             virtual double GetSpacing() &;
+
+            static std::atomic<int> ShapesLeft;
         
         protected:
             std::unique_ptr<Widget> _start;
@@ -124,6 +141,28 @@ auto shape_factory_with_deleter(const ShapeType type, Ts&&... params)
         if (shape)
             std::cout << "Deleting " << shapeString << "\n";
         delete shape;
+    };
+
+    std::unique_ptr<Overriding::Shape,decltype(delShape)> ptr{nullptr, delShape};
+    
+    if (type == ShapeType::Face)
+    {
+        ptr.reset(new Overriding::Face(std::forward<Ts>(params)...));
+    }
+
+    return ptr;
+};
+
+template<typename... Ts>
+auto shape_factory_with_returning_deleter(const ShapeType type, Ts&&... params)
+{
+    auto shapeString = shape_name(type);
+
+    auto delShape = [=] (Overriding::Shape* shape) {
+        if (shape)
+            std::cout << "Deleting " << shapeString << " using a returning deleter\n";
+        delete shape;
+        return Overriding::Shape::ShapesLeft > 0;
     };
 
     std::unique_ptr<Overriding::Shape,decltype(delShape)> ptr{nullptr, delShape};

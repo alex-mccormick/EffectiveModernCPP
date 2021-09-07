@@ -16,9 +16,31 @@ bool Widget::IsPopulated() const {
     return !((_x==0) && (_y==0));
 }
 
+void ExWidget::ProcessWidget(double scalar, std::vector<std::shared_ptr<ExWidget>>& processedWidgets)
+{
+    // Apply the scalar
+    _x *= scalar;
+    _y *= scalar;
+
+    // Add this to the list of processed widgets
+    processedWidgets.emplace_back(shared_from_this());
+}
+void ExWidget::ProcessWidgetWithThis(double scalar, std::vector<std::shared_ptr<ExWidget>>& processedWidgets)
+{
+    // Apply the scalar
+    _x *= scalar;
+    _y *= scalar;
+
+    // Add this to the list of processed widgets
+    processedWidgets.emplace_back(this);
+}
+
 namespace Overriding {
 
+    std::atomic<int> Shape::ShapesLeft{0};
+
     Shape::Shape() {
+        ++Shape::ShapesLeft;
         _start = std::make_unique<Widget>(-1, -1);
         _end = std::make_unique<Widget>(1, 2);
     }

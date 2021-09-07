@@ -57,6 +57,8 @@ class C4_SmartPointers : public BookChapter
         C4_SmartPointers();
 
         static void ResourceOwnership(void);
+        static void CRTP(void);
+        static void WeakPtr(void);
 };
 // class C5_Moves : public BookChapter
 // {
