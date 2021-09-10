@@ -51,14 +51,20 @@ class C3_ModernCpp : public BookChapter
         static void ConstexprDemo(void);
         static void RuleOfThree(void);
 };
-class C4_SmartPointers : public BookChapter
+class C4a_SmartPointers : public BookChapter
 {
     public:
-        C4_SmartPointers();
+        C4a_SmartPointers();
 
         static void ResourceOwnership(void);
         static void CRTP(void);
         static void WeakPtr(void);
+};
+class C4b_PImpl : public BookChapter
+{
+    public:
+        C4b_PImpl();
+        static void PImpl(void);
 };
 // class C5_Moves : public BookChapter
 // {

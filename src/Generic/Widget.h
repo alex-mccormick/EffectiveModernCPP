@@ -12,8 +12,11 @@ class Widget {
         constexpr Widget(double x, double y) : _x{x}, _y{y} { };
         
         Widget(Widget&& w); // The move constructor is defined
+        Widget& operator=(Widget&& w) = default;
         // Since the move constructor is defined, the copy constructor will be deleted
+
         Widget(const Widget& w) = default; // Explicitly define the default copy constructor
+        Widget& operator=(const Widget&) = default; // Same for the copy assignment
 
         // Destructor will be default, allows constexpr Widget
 
@@ -33,7 +36,7 @@ class Widget {
 
 };
 
-class ExWidget : public Widget, std::enable_shared_from_this<ExWidget> {
+class ExWidget : public Widget, public std::enable_shared_from_this<ExWidget> {
 
     public:
         ExWidget() : ExWidget(0, 0) { };
@@ -53,6 +56,7 @@ namespace Overriding {
         public:
             Shape();
             virtual ~Shape() { ShapesLeft--; };
+
 
             virtual void Draw() const;
             virtual double GetSpacing() &;

@@ -1,4 +1,5 @@
 #include "Chapters.h"
+#include "../Generic/Widget.h"
 #include <type_traits>
 #include <typeinfo>
 #include <cxxabi.h>

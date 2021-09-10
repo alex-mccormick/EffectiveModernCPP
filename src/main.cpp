@@ -20,6 +20,7 @@ int main(int argc, char** argv)
 		cout << "2. auto" << endl;
 		cout << "3. Modern C++" << endl;
 		cout << "4. Smart Pointers" << endl;
+		cout << "44. PImpl" << endl;
 		cout << "5. Rvalues, Moves, Forwarding" << endl;
 		cout << "6. Lambda" << endl;
 		cout << "7. Concurrency API" << endl;
@@ -50,7 +51,10 @@ int main(int argc, char** argv)
 			chapter = new C3_ModernCpp();
 			break;
 		case 4:
-			chapter = new C4_SmartPointers();
+			chapter = new C4a_SmartPointers();
+			break;
+		case 44:
+			chapter = new C4b_PImpl();
 			break;
 		// case 5:
 		// 	chapter = new Chapter5();
