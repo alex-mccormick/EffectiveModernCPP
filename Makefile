@@ -18,9 +18,9 @@ DEP = $(OBJ:%.o=%.d)
 
 .PHONY: all clean 
 
-all: EffectiveModernCpp
+all: $(TARGET)
 
-EffectiveModernCpp: $(OBJ)
+$(TARGET): $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 # Include dependencies
@@ -28,8 +28,6 @@ EffectiveModernCpp: $(OBJ)
 
 $(ODIR)/%.o: %.cpp
 	$(CC) -c $(INCLUDES) -o $@ $< $(CFLAGS) $(DEPFLAGS)
-
-.PHONY: clean all
 
 REMOVE_FILES := $(wildcard $(ODIR)/*.o) $(wildcard $(ODIR)/*.d)
 clean:
