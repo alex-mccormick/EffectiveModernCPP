@@ -1,6 +1,6 @@
 IDIR=include
 ODIR=obj
-BOOST="D:/Program Files/boost_1_75_0/boost_1_75_0"
+BOOST="D:/Program Files/boost_1_75_0"
 CC=g++
 CFLAGS= -std=c++17 -g -lstdc++fs
 DEPFLAGS = -MMD

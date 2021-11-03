@@ -71,11 +71,19 @@ class C4b_PImpl : public BookChapter
 //     C5_Moves();
 //     ~C5_Moves();
 // }
-// class C6_Lambda : public BookChapter
-// {
-//     C6_Lambda();
-//     ~C6_Lambda();
-// }
+class C6_Lambda : public BookChapter
+{
+    public:
+        C6_Lambda();
+        ~C6_Lambda();
+
+        static void CaptureModes(void);
+        static void InitCapture(void);
+        static void Bind(void);
+        static void GenericLambda(void);
+
+        static int staticDivisor;
+};
 // class C7_ConcurrencyAPI : public BookChapter
 // {
 //     C7_ConcurrencyAPI();

@@ -59,9 +59,9 @@ int main(int argc, char** argv)
 		// case 5:
 		// 	chapter = new Chapter5();
 		// 	break;
-		// case 6:
-		// 	chapter = new Chapter6();
-		// 	break;
+		case 6:
+			chapter = new C6_Lambda();
+			break;
 		// case 7:
 		// 	chapter = new Chapter7();
 		// 	break;

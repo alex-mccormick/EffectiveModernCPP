@@ -12,6 +12,10 @@ double Widget::GetRadius() const {
     return std::pow(std::pow(_x, 2) + std::pow(_y, 2), 0.5);
 }
 
+double Widget::GetDistanceTo(const Widget& rhs) const {
+    return Widget(_x - rhs._x, _y - rhs._y).GetRadius();
+}
+
 bool Widget::IsPopulated() const {
     return !((_x==0) && (_y==0));
 }
@@ -76,6 +80,11 @@ namespace Overriding {
     Face::Face(Widget* w1, Widget* w2) {
         _eyes.push_back(*w1);
         _eyes.push_back(*w2);
+    }
+
+    Face::Face(const Widget& w1, const Widget& w2) {
+        _eyes.push_back(w1);
+        _eyes.push_back(w2);
     }
 
     void Face::Draw() const {

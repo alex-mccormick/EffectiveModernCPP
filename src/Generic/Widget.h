@@ -25,6 +25,7 @@ class Widget {
         };
 
         double GetRadius() const;
+        double GetDistanceTo(const Widget& rhs) const;
         bool IsPopulated() const;
 
         constexpr double get_x() const {return _x;};
@@ -35,6 +36,8 @@ class Widget {
         double _y{0};
 
 };
+
+std::ostream& operator<<(std::ostream&, const Widget&);
 
 class ExWidget : public Widget, public std::enable_shared_from_this<ExWidget> {
 
@@ -83,6 +86,7 @@ namespace Overriding {
         public:
             Face();
             Face(Widget*, Widget*);
+            Face(const Widget&, const Widget&);
             virtual ~Face() override {};
 
             virtual void Draw() const final;
