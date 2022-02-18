@@ -104,8 +104,8 @@ void C3_ModernCpp::BuilderFunction()
     Overriding::Face *face1 = fb.withLeftEye(leftEye).withRightEye(rightEye).build();
     std::cout << "We made a face using an rvalue" << std::endl;
 
-    // Overriding::Face *face2 = fb.withLeftEyeLValue(leftEye).withRightEyeLValue(rightEye).build();
-    // std::cout << "We made a face using an lvalue" << std::endl;
+    Overriding::Face *face2 = fb.withLeftEyeLValue(leftEye).withRightEyeLValue(rightEye).build();
+    std::cout << "We made a face using an lvalue" << std::endl;
 
     Overriding::FaceBuilder fb2 = fb.withLeftEye(leftEye);
     Overriding::Face *face3 = fb2.build();

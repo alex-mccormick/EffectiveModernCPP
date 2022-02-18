@@ -131,11 +131,11 @@ namespace Overriding
             return *this;
         }
 
-        // Face *build() &
-        // {
-        //     std::cout << "Built a face!" << std::endl;
-        //     return new Face(eye1_, eye2_);
-        // }
+        Face *build() &
+        {
+            std::cout << "Built a face!" << std::endl;
+            return new Face(eye1_, eye2_);
+        }
         Face *build() &&
         {
             std::cout << "Build a face from an rvalue reference" << std::endl;
