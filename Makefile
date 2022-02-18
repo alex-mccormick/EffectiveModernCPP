@@ -1,6 +1,5 @@
 IDIR=include
 ODIR=obj
-BOOST="D:/Program Files/boost_1_75_0"
 CC=g++
 CFLAGS= -std=c++17 -g -lstdc++fs
 DEPFLAGS = -MMD
@@ -8,7 +7,7 @@ DEPFLAGS = -MMD
 TARGET = EffectiveModernCpp
 
 SRCDIRS = $(sort $(dir $(wildcard src/*/))) src
-INCLUDES = -I$(IDIR) -I$(BOOST)
+INCLUDES = -I$(IDIR)
 
 VPATH = $(SRCDIRS)
 SRC = $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.cpp))
@@ -26,8 +25,11 @@ EffectiveModernCpp: $(OBJ)
 # Include dependencies
 -include $(DEP)
 
-$(ODIR)/%.o: %.cpp
+$(ODIR)/%.o: %.cpp | $(ODIR)
 	$(CC) -c $(INCLUDES) -o $@ $< $(CFLAGS) $(DEPFLAGS)
+
+$(ODIR):
+	mkdir -p $@
 
 .PHONY: clean all
 

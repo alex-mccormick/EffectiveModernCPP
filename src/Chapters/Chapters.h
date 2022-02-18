@@ -18,8 +18,6 @@ private:
     template <typename T>
     static void DeduceTypeFromFunction(const T &);
     template <typename T>
-    static void DeduceTypeFromBoost(const T &);
-    template <typename T>
     static void DeduceTypeFromStd(const T &);
 
     template <typename T>

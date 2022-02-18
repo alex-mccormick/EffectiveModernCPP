@@ -6,7 +6,6 @@
 #include <memory>
 #include <string>
 #include <cstdlib>
-#include <boost/type_index.hpp>
 
 C1_DeducingTypes::C1_DeducingTypes()
     : BookChapter("DeducingTypes")
@@ -133,12 +132,10 @@ void C1_DeducingTypes::ViewTypes()
     auto vector = createVector();
     DeduceTypeFromFunction(&vector[0]);
     DeduceTypeFromStd(&vector[0]); // Note that this is different, and wrong.
-    DeduceTypeFromBoost(&vector[0]);
 
     const auto cvector = createVector();
     DeduceTypeFromFunction(&cvector[0]);
     DeduceTypeFromStd(&cvector[0]);
-    DeduceTypeFromBoost(&cvector[0]);
 }
 
 template<typename T>
@@ -146,12 +143,6 @@ void C1_DeducingTypes::DeduceTypeFromFunction(const T& param)
 {
     // std::cout << "T: " << type_name<T>() << std::endl;
     std::cout << "T: " << type_name<T>() << ", param: " << type_name<decltype(param)>() << std::endl;
-}
-template<typename T>
-void C1_DeducingTypes::DeduceTypeFromBoost(const T& param)
-{
-    // std::cout << "T: " << type_name<T>() << std::endl;
-    std::cout << "T: " << boost::typeindex::type_id_with_cvr<T>().pretty_name() << ", param: " << boost::typeindex::type_id_with_cvr<decltype(param)>().pretty_name() << std::endl;
 }
 template<typename T>
 void C1_DeducingTypes::DeduceTypeFromStd(const T& param)
